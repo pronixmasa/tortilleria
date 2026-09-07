@@ -99,6 +99,12 @@
     background:#fff;
   }
   .stepper .et{font-size:10.5px;font-weight:800;text-align:center;color:var(--ladrillo-osc);padding:3px 0 5px;letter-spacing:.3px;}
+  .producto.agotado{opacity:.75;}
+  .producto.agotado .media img{filter:grayscale(1);}
+  .producto.agotado .nombre{text-decoration:line-through;}
+  .badge-agotado{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:#8A8A93;border-radius:20px;padding:3px 10px;margin-top:7px;letter-spacing:.4px;}
+  .stepper.agotado{background:#F1F1F3;border-color:#B9B9C0;min-width:86px;justify-content:center;}
+  .stepper.agotado .et{color:#6E6E77;font-size:12px;padding:12px 8px;}
 
   .barra-carrito{
     position:fixed;left:0;right:0;bottom:0;
@@ -231,14 +237,15 @@
 </div>
 
 <script>
+/* Para marcar un producto como AGOTADO solo cambia disponible:true por disponible:false en su línea. */
 const productos = [
-  {id:1, categoria:"Tortillas y Masa", nombre:"Tortilla de Maíz (Grande 13.5 cm)", presentacion:"$24 · el kg", precio:24, unidad:"kg", imagen:"fotos/tortilla de maiz.jpg", emoji:"🫓", desc:"Tortilla elaborada solamente con maíz nixtamalizado, sin aditivos. Suave, calientita y de sabor tradicional."},
-  {id:2, categoria:"Tortillas y Masa", nombre:"Tortilla de Maíz (mediana 11.5 cm)", presentacion:"$24 · el kg", precio:24, unidad:"kg", imagen:"fotos/tortilla de maiz 14.jpg", emoji:"🫓", desc:"Tortilla mediana especial para tacos al vapor, taquera"},
-  {id:3, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Molida)", presentacion:"$20 · el kg", precio:20, unidad:"kg", imagen:"fotos/masa molida.jpg", emoji:"🌽", desc:"Masa fresca molida fina, lista para tortillas suaves hechas en casa."},
-  {id:4, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Quebrada)", presentacion:"$22 · el kg", precio:22, unidad:"kg", imagen:"fotos/masa quebrada.jpg", emoji:"🌽", desc:"Quebrada, ideal para gorditas, quesadillas, tamales y antojitos."},
-  {id:5, categoria:"Para acompañar", nombre:"Frijol Cocido", presentacion:"$20 · bolsa 500 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/frijol cocido.jpg", emoji:"🫘", desc:"Frijol cocido caldosito, listo para servir y acompañar tus tortillas."},
-  {id:6, categoria:"Para acompañar", nombre:"Nopales Cocidos", presentacion:"$20 · 250 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/nopales cocidos.jpg", emoji:"🌵", desc:"Nopales tiernos ya cocidos, perfectos para ensaladas o tacos."},
-  {id:7, categoria:"Para acompañar", nombre:"Salsa Roja de Tomate", presentacion:"$15 · 200 g", precio:15, unidad:"vaso", imagen:"fotos/salsa de tomate.jpg", emoji:"🌶️", desc:"Salsa roja casera de tomate, con el picor justo para tus tacos."},
+  {id:1, disponible:true, categoria:"Tortillas y Masa", nombre:"Tortilla de Maíz (Grande 13.5 cm)", presentacion:"$24 · el kg", precio:24, unidad:"kg", imagen:"fotos/tortilla de maiz.jpg", emoji:"🫓", desc:"Tortilla elaborada solamente con maíz nixtamalizado, sin aditivos. Suave, calientita y de sabor tradicional."},
+  {id:2, disponible:true, categoria:"Tortillas y Masa", nombre:"Tortilla de Maíz (mediana 11.5 cm)", presentacion:"$24 · el kg", precio:24, unidad:"kg", imagen:"fotos/tortilla de maiz 14.jpg", emoji:"🫓", desc:"Tortilla mediana especial para tacos al vapor, taquera"},
+  {id:3, disponible:true, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Molida)", presentacion:"$20 · el kg", precio:20, unidad:"kg", imagen:"fotos/masa molida.jpg", emoji:"🌽", desc:"Masa fresca molida fina, lista para tortillas suaves hechas en casa."},
+  {id:4, disponible:true, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Quebrada)", presentacion:"$22 · el kg", precio:22, unidad:"kg", imagen:"fotos/masa quebrada.jpg", emoji:"🌽", desc:"Quebrada, ideal para gorditas, quesadillas, tamales y antojitos."},
+  {id:5, disponible:true, categoria:"Para acompañar", nombre:"Frijol Cocido", presentacion:"$20 · bolsa 500 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/frijol cocido.jpg", emoji:"🫘", desc:"Frijol cocido caldosito, listo para servir y acompañar tus tortillas."},
+  {id:6, disponible:true, categoria:"Para acompañar", nombre:"Nopales Cocidos", presentacion:"$20 · 250 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/nopales cocidos.jpg", emoji:"🌵", desc:"Nopales tiernos ya cocidos, perfectos para ensaladas o tacos."},
+  {id:7, disponible:true, categoria:"Para acompañar", nombre:"Salsa Roja de Tomate", presentacion:"$15 · 200 g", precio:15, unidad:"vaso", imagen:"fotos/salsa de tomate.jpg", emoji:"🌶️", desc:"Salsa roja casera de tomate, con el picor justo para tus tacos."},
 ];
 
 const WHATSAPP_NEGOCIO = "524777308101";
@@ -253,7 +260,8 @@ function formatoMoneda(n){
 function subtotalCarrito(){
   return Object.entries(carrito).reduce((sum,[id,cant])=>{
     const p = productos.find(p=>p.id==id);
-    return p ? sum + p.precio*cant : sum;
+    if(!p || p.disponible===false) return sum;
+    return sum + p.precio*cant;
   },0);
 }
 function costoEnvio(){
@@ -275,15 +283,21 @@ function pintarCatalogo(){
   const cats = [...new Set(productos.map(p=>p.categoria))];
   cont.innerHTML = cats.map(cat=>`
     <h3 class="categoria">${cat}</h3>
-    ${productos.filter(p=>p.categoria===cat).map(p=>`
-      <div class="producto">
+    ${productos.filter(p=>p.categoria===cat).map(p=>{
+      const agotado = p.disponible===false;
+      return `
+      <div class="producto${agotado?' agotado':''}">
         <div class="media">${mediaProducto(p)}</div>
         <div class="info">
           <p class="nombre">${p.nombre}</p>
           <p class="desc">${p.desc}</p>
-          <span class="presentacion">${p.presentacion}</span>
+          ${agotado?`<span class="badge-agotado">AGOTADO</span>`:`<span class="presentacion">${p.presentacion}</span>`}
           <p class="precio">${formatoMoneda(p.precio)} <small>/ ${p.unidad}</small></p>
         </div>
+        ${agotado?`
+        <div class="stepper agotado">
+          <div class="et">AGOTADO</div>
+        </div>`:`
         <div class="stepper">
           <div class="fila">
             <button type="button" aria-label="Quitar" onclick="cambiarCantidad(${p.id},-1)">−</button>
@@ -291,12 +305,14 @@ function pintarCatalogo(){
             <button type="button" aria-label="Agregar" onclick="cambiarCantidad(${p.id},1)">+</button>
           </div>
           <div class="et">AGREGAR</div>
-        </div>
-      </div>`).join("")}
+        </div>`}
+      </div>`;}).join("")}
   `).join("");
 }
 
 function cambiarCantidad(id,delta){
+  const p = productos.find(p=>p.id==id);
+  if(p && p.disponible===false && delta>0) return;
   const actual = carrito[id]||0;
   const nueva = Math.max(0,actual+delta);
   if(nueva===0) delete carrito[id]; else carrito[id]=nueva;
