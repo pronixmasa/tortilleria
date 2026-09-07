@@ -3,19 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Tortilleria PRONIXMASA · Pedidos</title>
+<title>Abarrotes Doña Lupe · Pedidos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --tinta:#233d2c;
-    --papel:#f4efe2;
-    --hoja:#4c7a5a;
-    --hoja-osc:#365a41;
-    --mostaza:#e2a33e;
-    --jitomate:#c1462f;
-    --linea:#d8cfb8;
-    --blanco:#fffdf8;
+    --tinta:#1a1a1a;
+    --papel:#fafafa;
+    --ladrillo:#c45a2c;
+    --antracita:#2d2d2d;
+    --crema:#f5f0e8;
+    --texto:#333333;
   }
   *{box-sizing:border-box;}
   body{margin:0;}
@@ -36,9 +34,9 @@
     font-size:26px;
     font-weight:600;
     margin:0;
-    color:var(--hoja-osc);
+    color:var(--antracita);
   }
-  .brand span{color:var(--jitomate);}
+  .brand span{color:var(--ladrillo);}
   .subtitulo{
     margin:6px 0 0;
     font-size:14px;
@@ -49,11 +47,11 @@
     display:flex;
     gap:10px;
     font-size:12.5px;
-    color:var(--hoja-osc);
+    color:var(--antracita);
     flex-wrap:wrap;
   }
   .franja span{
-    background:var(--blanco);
+    background:var(--crema);
     border:1px solid var(--linea);
     border-radius:20px;
     padding:5px 12px;
@@ -265,11 +263,11 @@
 <body>
 
 <header>
-  <h1 class="brand">Abarrotes <span>Doña Lupe</span></h1>
-  <p class="subtitulo">Escanea, elige y te lo llevamos a tu puerta.</p>
+  <h1 class="brand">Tortilleria <span>PRONIXMASA</span></h1>
+  <p class="subtitulo">Tortillas y productos de maíz artesanales</p>
   <div class="franja">
     <span>Pago contraentrega</span>
-    <span>Entrega el mismo día</span>
+    <span>Envío a $25</span>
   </div>
 </header>
 
@@ -335,19 +333,17 @@
    - video:  "fotos/aguacate.mp4" (un video corto, opcional; si existe, se usa en vez de la imagen)
    - emoji:  se usa solo como respaldo si no hay imagen ni video */
 const productos = [
-  {id:1, categoria:"Frutas y verduras", nombre:"Aguacate (kg)", precio:45, imagen:"fotos/aguacate.jpg", emoji:"🥑"},
-  {id:2, categoria:"Frutas y verduras", nombre:"Jitomate (kg)", precio:28, imagen:"fotos/jitomate.jpg", emoji:"🍅"},
-  {id:3, categoria:"Frutas y verduras", nombre:"Cebolla (kg)", precio:22, imagen:"fotos/cebolla.jpg", emoji:"🧅"},
-  {id:4, categoria:"Despensa", nombre:"Huevo (docena)", precio:38, imagen:"fotos/huevo.jpg", emoji:"🥚"},
-  {id:5, categoria:"Despensa", nombre:"Frijol (kg)", precio:32, imagen:"fotos/frijol.jpg", emoji:"🫘"},
-  {id:6, categoria:"Despensa", nombre:"Arroz (kg)", precio:26, imagen:"fotos/arroz.jpg", emoji:"🍚"},
-  {id:7, categoria:"Bebidas", nombre:"Refresco 2L", precio:32, video:"fotos/refresco.mp4", emoji:"🥤"},
-  {id:8, categoria:"Bebidas", nombre:"Agua natural 1L", precio:14, imagen:"fotos/agua.jpg", emoji:"💧"},
+  {id:1, categoria:"Tortillas", nombre:"Tortilla de Maiz Nixtamalizado", precio:24, imagen:"fotos/tortilla de maiz.jpg", descripcion:"kg"},
+  {id:2, categoria:"Masa", nombre:"Masa de Maiz (Molida)", precio:22, imagen:"fotos/masa molida.jpg", descripcion:"kg"},
+  {id:3, categoria:"Masa", nombre:"Masa de Maíz (Quebrada ideal para gorditas, quesadillas, tamales, etc)", precio:23, imagen:"fotos/masa quebrada.jpg", descripcion:"kg"},
+  {id:4, categoria:"Despensa", nombre:"Frijol cocido", precio:20, imagen:"fotos/frijol cocido.jpg", descripcion:"bolsa 500g"},
+  {id:5, categoria:"Despensa", nombre:"Nopales cocidos", precio:20, imagen:"fotos/nopales cocidos.jpg", descripcion:"bolsa 250g"},
+  {id:6, categoria:"Salsas", nombre:"Salsa Roja de tomate", precio:15, imagen:"fotos/salsa de tomate.jpg", descripcion:"200g"},
 ];
 
 /* Número de WhatsApp del negocio en formato internacional, sin signos ni espacios.
    Ejemplo México: 52 + 10 dígitos */
-const WHATSAPP_NEGOCIO = "5214777308101";
+const WHATSAPP_NEGOCIO = "524777308101";
 
 /* ================= Estado ================= */
 let carrito = {}; // {productoId: cantidad}
@@ -361,7 +357,7 @@ function mediaProducto(p){
     return `<video src="${p.video}" autoplay muted loop playsinline></video>`;
   }
   if (p.imagen){
-    return `<img src="${p.imagen}" alt="${p.nombre}" loading="lazy">`;
+    return `<img src="${p.imagen}" alt="${p.nombre} - ${p.descripcion}" loading="lazy">`;
   }
   return p.emoji || "🛒";
 }
@@ -376,7 +372,8 @@ function pintarCatalogo(){
         <div class="media">${mediaProducto(p)}</div>
         <div class="info">
           <p class="nombre">${p.nombre}</p>
-          <p class="precio">${formatoMoneda(p.precio)}</p>
+          <p class="descripcion">${p.descripcion}</p>
+          <p class="precio">${formatoMoneda(p.precio)} / ${p.precio === 20 ? "bolsa" : "kg"}</p>
         </div>
         <div class="stepper">
           <button onclick="cambiarCantidad(${p.id}, -1)">−</button>
