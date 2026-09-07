@@ -306,7 +306,7 @@ function actualizarBarra(){
   if(n>0){
     barra.classList.add("activa");
     document.getElementById("barraCantidad").textContent = n===1 ? "1 producto" : `${n} productos`;
-    document.getElementById("barraTotal").textContent = formatoMoneda(totalConEnvio()) + " total";
+    document.getElementById("barraTotal").textContent = formatoMoneda(subtotalCarrito());
     document.getElementById("barraEnvio").textContent = textoEnvio();
   } else barra.classList.remove("activa");
 }
