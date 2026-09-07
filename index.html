@@ -2,506 +2,416 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Tortilleria Pronixmasa · Pedidos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tortilleria PRONIXMASA · Pedidos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --tinta:#1a1a1a;
-    --papel:#fafafa;
-    --ladrillo:#c45a2c;
-    --antracita:#2d2d2d;
-    --crema:#f5f0e8;
-    --texto:#333333;
+    --ladrillo:#C7501F;
+    --ladrillo-osc:#9E3D14;
+    --ladrillo-claro:#FFF1E6;
+    --antracita:#2B2B30;
+    --antracita-2:#3B3B42;
+    --fondo:#FAF7F2;
+    --tarjeta:#FFFFFF;
+    --linea:#E9DCCB;
+    --texto:#2B2B30;
+    --muted:#7B766F;
   }
   *{box-sizing:border-box;}
   body{margin:0;}
   html,body{
-    background:var(--papel);
-    color:var(--tinta);
-    font-family:'Nunito Sans', sans-serif;
+    background:var(--fondo);
+    color:var(--texto);
+    font-family:'Nunito Sans',system-ui,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3,.brand{font-family:'Fraunces', serif;}
+  h1,h2,h3,.brand{font-family:'Fraunces',serif;}
 
-  /* ---------- Header ---------- */
   header{
-    padding:28px 20px 22px;
-    border-bottom:2px solid var(--linea);
+    background:var(--antracita);
+    color:#fff;
+    padding:26px 20px 20px;
+    border-bottom:4px solid var(--ladrillo);
   }
-  .brand{
-    font-size:26px;
-    font-weight:600;
-    margin:0;
-    color:var(--antracita);
-  }
-  .brand span{color:var(--ladrillo);}
-  .subtitulo{
-    margin:6px 0 0;
-    font-size:14px;
-    color:#5a5346;
-  }
-  .franja{
-    margin-top:14px;
-    display:flex;
-    gap:10px;
-    font-size:12.5px;
-    color:var(--antracita);
-    flex-wrap:wrap;
-  }
+  .brand{font-size:26px;font-weight:700;margin:0;line-height:1.1;}
+  .brand span{color:#FF9E5E;}
+  .subtitulo{margin:6px 0 0;font-size:14px;color:#D8D3CC;}
+  .franja{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;}
   .franja span{
-    background:var(--crema);
-    border:1px solid var(--linea);
+    background:var(--antracita-2);
+    border:1px solid #55555E;
+    color:#fff;
     border-radius:20px;
-    padding:5px 12px;
-    font-weight:700;
+    padding:6px 12px;
+    font-weight:800;
+    font-size:12.5px;
   }
+  .franja span.dest{background:var(--ladrillo);border-color:var(--ladrillo);}
 
-  /* ---------- Catálogo ---------- */
-  main{
-    max-width:520px;
-    margin:0 auto;
-    padding:22px 16px 140px;
-  }
+  main{max-width:520px;margin:0 auto;padding:18px 16px 150px;}
   .categoria{
-    font-size:13px;
-    text-transform:none;
-    letter-spacing:.2px;
-    color:var(--hoja-osc);
-    font-weight:700;
-    margin:26px 0 12px;
-    padding-bottom:6px;
-    border-bottom:2px solid var(--hoja);
-    display:inline-block;
+    font-size:14px;color:var(--antracita);font-weight:800;
+    margin:24px 0 12px;padding-bottom:6px;
+    border-bottom:3px solid var(--ladrillo);display:inline-block;
   }
   .producto{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background:var(--blanco);
+    display:flex;align-items:flex-start;gap:12px;
+    background:var(--tarjeta);
     border:1px solid var(--linea);
-    border-radius:14px;
-    padding:12px;
-    margin-bottom:10px;
+    border-radius:16px;
+    padding:12px;margin-bottom:12px;
+    box-shadow:0 2px 8px rgba(43,43,48,.06);
   }
   .media{
-    font-size:30px;
-    width:58px;
-    height:58px;
-    flex-shrink:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#eef3ea;
-    border-radius:10px;
-    overflow:hidden;
+    width:74px;height:74px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--ladrillo-claro);
+    border-radius:12px;overflow:hidden;font-size:32px;
   }
-  .media img, .media video{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-  }
+  .media img,.media video{width:100%;height:100%;object-fit:cover;display:block;}
   .info{flex:1;min-width:0;}
-  .nombre{font-weight:700;font-size:15px;margin:0;}
-  .precio{color:var(--hoja-osc);font-weight:700;font-size:14px;margin-top:2px;}
-  .stepper{
-    display:flex;
-    align-items:center;
-    gap:0;
-    border:1.5px solid var(--hoja);
-    border-radius:10px;
-    overflow:hidden;
-    flex-shrink:0;
+  .nombre{font-weight:800;font-size:15px;margin:0;line-height:1.25;}
+  .desc{font-size:13px;color:var(--muted);margin:5px 0 0;line-height:1.4;}
+  .presentacion{
+    display:inline-block;font-size:11.5px;font-weight:800;color:var(--ladrillo-osc);
+    background:var(--ladrillo-claro);border-radius:20px;padding:2px 9px;margin-top:7px;
   }
-  .stepper button{
-    width:32px;height:32px;
-    border:none;
-    background:var(--blanco);
-    color:var(--hoja-osc);
-    font-size:18px;
-    font-weight:700;
-    cursor:pointer;
-  }
-  .stepper button:active{background:#eef3ea;}
-  .stepper .cant{
-    width:26px;
-    text-align:center;
-    font-weight:700;
-    font-size:14px;
-  }
+  .precio{color:var(--antracita);font-weight:800;font-size:16px;margin:6px 0 0;}
+  .precio small{font-size:12px;color:var(--muted);font-weight:700;}
 
-  /* ---------- Barra flotante ---------- */
+  .stepper{
+    display:flex;flex-direction:column;align-items:stretch;
+    background:var(--ladrillo-claro);
+    border:1.5px solid var(--ladrillo);
+    border-radius:14px;overflow:hidden;flex-shrink:0;min-width:86px;
+  }
+  .stepper .fila{display:flex;align-items:center;justify-content:space-between;}
+  .stepper button{
+    width:38px;height:38px;border:none;
+    background:var(--ladrillo);color:#fff;
+    font-size:20px;font-weight:800;cursor:pointer;line-height:1;
+  }
+  .stepper button:active{background:var(--ladrillo-osc);}
+  .stepper .cant{
+    flex:1;text-align:center;font-weight:800;font-size:16px;color:var(--antracita);
+    background:#fff;
+  }
+  .stepper .et{font-size:10.5px;font-weight:800;text-align:center;color:var(--ladrillo-osc);padding:3px 0 5px;letter-spacing:.3px;}
+
   .barra-carrito{
-    position:fixed;
-    left:0;right:0;bottom:0;
-    background:var(--hoja-osc);
-    color:var(--blanco);
-    padding:14px 18px;
-    display:none;
-    align-items:center;
-    justify-content:space-between;
-    box-shadow:0 -6px 18px rgba(0,0,0,.15);
-    z-index:20;
+    position:fixed;left:0;right:0;bottom:0;
+    background:#232327;
+    color:#fff;
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+    display:none;align-items:center;justify-content:space-between;gap:12px;
+    border-top:3px solid var(--ladrillo);
+    box-shadow:0 -8px 24px rgba(0,0,0,.35);
+    z-index:20;opacity:1;
   }
   .barra-carrito.activa{display:flex;}
-  .barra-carrito .texto{font-size:14px;}
-  .barra-carrito .texto b{display:block;font-size:16px;}
+  .barra-carrito .texto{font-size:13px;color:#E9E2D8;}
+  .barra-carrito .texto b{display:block;font-size:18px;color:#fff;}
+  .barra-carrito .envio-msg{font-size:12px;color:#FFB98A;font-weight:700;}
   .barra-carrito button{
-    background:var(--mostaza);
-    color:var(--tinta);
-    border:none;
-    padding:10px 18px;
-    border-radius:10px;
-    font-weight:700;
-    font-size:14px;
-    cursor:pointer;
+    background:var(--ladrillo);color:#fff;border:none;
+    padding:14px 20px;border-radius:12px;
+    font-weight:800;font-size:15px;cursor:pointer;white-space:nowrap;
   }
 
-  /* ---------- Panel (carrito / checkout) ---------- */
-  .fondo-panel{
-    position:fixed;inset:0;
-    background:rgba(35,61,44,.45);
-    display:none;
-    z-index:30;
-  }
+  .fondo-panel{position:fixed;inset:0;background:rgba(20,20,24,.55);display:none;z-index:30;}
   .fondo-panel.activo{display:block;}
   .panel{
-    position:fixed;
-    left:0;right:0;bottom:0;
-    max-width:520px;
-    margin:0 auto;
-    background:var(--papel);
-    border-radius:20px 20px 0 0;
-    max-height:88vh;
-    overflow-y:auto;
-    padding:20px 18px 26px;
-    transform:translateY(100%);
-    transition:transform .28s ease;
-    z-index:31;
+    position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;
+    background:#fff;border-radius:20px 20px 0 0;max-height:90vh;overflow-y:auto;
+    padding:20px 18px calc(26px + env(safe-area-inset-bottom));
+    transform:translateY(102%);transition:transform .28s ease;z-index:31;
   }
   .panel.abierto{transform:translateY(0);}
-  .panel-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:14px;
-  }
-  .panel-header h2{margin:0;font-size:19px;color:var(--hoja-osc);}
-  .cerrar{
-    background:none;border:none;font-size:22px;color:var(--tinta);cursor:pointer;line-height:1;
-  }
-  .item-carrito{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:10px 0;border-bottom:1px solid var(--linea);gap:10px;
-  }
+  .panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .panel-header h2{margin:0;font-size:19px;color:var(--antracita);}
+  .cerrar{background:#F1ECE3;border:none;font-size:22px;color:var(--texto);cursor:pointer;line-height:1;width:36px;height:36px;border-radius:50%;}
+  .item-carrito{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--linea);gap:10px;}
   .item-carrito .nombre{font-size:14px;}
-  .item-carrito .sub{font-size:12.5px;color:#6b6455;}
-  .quitar{background:none;border:none;color:var(--jitomate);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-top:4px;}
-  .total-linea{
-    display:flex;justify-content:space-between;align-items:center;
-    margin-top:16px;padding-top:14px;border-top:2px solid var(--hoja-osc);
-    font-weight:700;font-size:17px;
-  }
-  .vacio{text-align:center;color:#8b8271;padding:30px 0;font-size:14px;}
+  .item-carrito .sub{font-size:12.5px;color:var(--muted);margin:3px 0 0;}
+  .quitar{background:none;border:none;color:var(--ladrillo);font-size:13px;font-weight:800;cursor:pointer;padding:4px 0 0;margin-top:2px;}
+  .resumen{background:var(--fondo);border:1px solid var(--linea);border-radius:12px;padding:12px;margin-top:14px;font-size:14px;}
+  .resumen .fila{display:flex;justify-content:space-between;margin:4px 0;}
+  .resumen .fila.gratis{color:#1E7A34;font-weight:800;}
+  .total-linea{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:2px solid var(--antracita);font-weight:800;font-size:18px;}
+  .alerta-envio{margin-top:12px;border-radius:12px;padding:10px 12px;font-size:13px;font-weight:700;}
+  .alerta-envio.falta{background:var(--ladrillo-claro);border:1px solid var(--ladrillo);color:var(--ladrillo-osc);}
+  .alerta-envio.ok{background:#E8F5E9;border:1px solid #1E7A34;color:#1E7A34;}
+  .vacio{text-align:center;color:var(--muted);padding:30px 0;font-size:14px;}
 
-  /* ---------- Formulario ---------- */
-  label{
-    display:block;font-size:13px;font-weight:700;margin:14px 0 6px;color:var(--hoja-osc);
+  label{display:block;font-size:13px;font-weight:800;margin:14px 0 6px;color:var(--antracita);}
+  input[type=text],input[type=tel],textarea{
+    width:100%;border:1.5px solid var(--linea);background:#fff;border-radius:10px;
+    padding:12px;font-size:16px;font-family:inherit;color:var(--texto);
   }
-  input[type=text], input[type=tel], textarea{
-    width:100%;
-    border:1.5px solid var(--linea);
-    background:var(--blanco);
-    border-radius:10px;
-    padding:11px 12px;
-    font-size:15px;
-    font-family:inherit;
-    color:var(--tinta);
-  }
-  input:focus, textarea:focus{outline:2px solid var(--hoja);border-color:var(--hoja);}
+  input:focus,textarea:focus{outline:2px solid var(--ladrillo);border-color:var(--ladrillo);}
   textarea{resize:vertical;min-height:64px;}
-  .aviso-pago{
-    margin-top:16px;
-    background:#eef3ea;
-    border:1px solid var(--hoja);
-    border-radius:10px;
-    padding:10px 12px;
-    font-size:13px;
-    color:var(--hoja-osc);
-  }
-  .btn-primario{
-    width:100%;
-    margin-top:20px;
-    background:var(--jitomate);
-    color:var(--blanco);
-    border:none;
-    padding:15px;
-    border-radius:12px;
-    font-size:16px;
-    font-weight:700;
-    cursor:pointer;
-    font-family:inherit;
-  }
-  .btn-primario:disabled{background:#c9bfa9;cursor:not-allowed;}
-  .btn-secundario{
-    width:100%;
-    margin-top:10px;
-    background:transparent;
-    color:var(--hoja-osc);
-    border:1.5px solid var(--hoja);
-    padding:13px;
-    border-radius:12px;
-    font-size:14px;
-    font-weight:700;
-    cursor:pointer;
-    font-family:inherit;
-  }
-  .error{color:var(--jitomate);font-size:12.5px;margin-top:4px;display:none;}
+  .aviso-pago{margin-top:16px;background:var(--ladrillo-claro);border:1px solid var(--ladrillo);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--antracita);}
+  .btn-primario{width:100%;margin-top:16px;background:var(--ladrillo);color:#fff;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .btn-primario:disabled{background:#C9BFA9;cursor:not-allowed;}
+  .btn-secundario{width:100%;margin-top:10px;background:transparent;color:var(--antracita);border:1.5px solid var(--antracita);padding:13px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .error{color:var(--ladrillo-osc);font-size:12.5px;margin-top:4px;display:none;}
+  footer{max-width:520px;margin:0 auto;padding:0 16px 40px;text-align:center;color:var(--muted);font-size:12.5px;}
 </style>
 </head>
 <body>
 
 <header>
   <h1 class="brand">Tortilleria <span>PRONIXMASA</span></h1>
-  <p class="subtitulo">Tortillas y productos de maíz artesanales</p>
+  <p class="subtitulo">De nuestro nixtamal a tu mesa. Pide por WhatsApp.</p>
   <div class="franja">
+    <span class="dest">Envío $25 · GRATIS desde $200</span>
     <span>Pago contraentrega</span>
-    <span>Envío a $25</span>
   </div>
 </header>
 
 <main id="catalogo"></main>
 
+<footer>Tortilleria PRONIXMASA · Producto fresco del día<br>Agrega tus fotos en la carpeta <b>fotos/</b> con el mismo nombre del producto.</footer>
+
 <div class="barra-carrito" id="barraCarrito">
   <div class="texto">
     <span id="barraCantidad">0 productos</span>
     <b id="barraTotal">$0.00</b>
+    <span class="envio-msg" id="barraEnvio"></span>
   </div>
   <button onclick="abrirCarrito()">Ver carrito</button>
 </div>
 
 <div class="fondo-panel" id="fondo" onclick="cerrarTodo()"></div>
 
-<!-- Panel carrito -->
 <div class="panel" id="panelCarrito">
   <div class="panel-header">
     <h2>Tu pedido</h2>
     <button class="cerrar" onclick="cerrarTodo()">&times;</button>
   </div>
   <div id="listaCarrito"></div>
-  <div class="total-linea">
-    <span>Total</span>
-    <span id="totalCarrito">$0.00</span>
-  </div>
+  <div id="resumenCarrito"></div>
   <button class="btn-primario" id="btnContinuar" onclick="irACheckout()">Continuar con la entrega</button>
 </div>
 
-<!-- Panel checkout -->
 <div class="panel" id="panelCheckout">
   <div class="panel-header">
     <h2>Datos de entrega</h2>
     <button class="cerrar" onclick="cerrarTodo()">&times;</button>
   </div>
-
+  <div id="resumenCheckout"></div>
   <label for="nombre">Nombre completo</label>
-  <input type="text" id="nombre" placeholder="¿Cómo te llamas?">
+  <input type="text" id="nombre" placeholder="¿Cómo te llamas?" autocomplete="name">
   <div class="error" id="errNombre">Escribe tu nombre.</div>
-
   <label for="telefono">Teléfono</label>
-  <input type="tel" id="telefono" placeholder="10 dígitos">
+  <input type="tel" id="telefono" placeholder="10 dígitos" inputmode="numeric" autocomplete="tel">
   <div class="error" id="errTelefono">Escribe un teléfono a 10 dígitos.</div>
-
   <label for="direccion">Dirección de entrega</label>
   <textarea id="direccion" placeholder="Calle, número, colonia"></textarea>
   <div class="error" id="errDireccion">Escribe la dirección donde te entregamos.</div>
-
   <label for="referencia">Referencias (opcional)</label>
   <textarea id="referencia" placeholder="Portón negro, entre panadería y farmacia..."></textarea>
-
   <div class="aviso-pago">💵 Pagas en efectivo cuando te entreguemos tu pedido.</div>
-
   <button class="btn-primario" onclick="enviarPedido()">Confirmar pedido por WhatsApp</button>
   <button class="btn-secundario" onclick="volverACarrito()">Regresar al carrito</button>
 </div>
 
 <script>
-/* ================= Datos del catálogo =================
-   Reemplaza esto con tus productos reales. */
-/* Cada producto puede traer:
-   - imagen: "fotos/aguacate.jpg"  (una foto)
-   - video:  "fotos/aguacate.mp4" (un video corto, opcional; si existe, se usa en vez de la imagen)
-   - emoji:  se usa solo como respaldo si no hay imagen ni video */
 const productos = [
-  {id:1, categoria:"Tortillas", nombre:"Tortilla de Maiz Nixtamalizado", precio:24, imagen:"fotos/tortilla de maiz.jpg", descripcion:"kg"},
-  {id:2, categoria:"Masa", nombre:"Masa de Maiz (Molida)", precio:22, imagen:"fotos/masa molida.jpg", descripcion:"kg"},
-  {id:3, categoria:"Masa", nombre:"Masa de Maíz (Quebrada ideal para gorditas, quesadillas, tamales, etc)", precio:23, imagen:"fotos/masa quebrada.jpg", descripcion:"kg"},
-  {id:4, categoria:"Despensa", nombre:"Frijol cocido", precio:20, imagen:"fotos/frijol cocido.jpg", descripcion:"bolsa 500g"},
-  {id:5, categoria:"Despensa", nombre:"Nopales cocidos", precio:20, imagen:"fotos/nopales cocidos.jpg", descripcion:"bolsa 250g"},
-  {id:6, categoria:"Salsas", nombre:"Salsa Roja de tomate", precio:15, imagen:"fotos/salsa de tomate.jpg", descripcion:"200g"},
+  {id:1, categoria:"Tortillas y Masa", nombre:"Tortilla de Maíz Nixtamalizado", presentacion:"$24 · el kg", precio:24, unidad:"kg", imagen:"fotos/tortilla de maiz.jpg", emoji:"🫓", desc:"Tortilla elaborada solamente con maíz nixtamalizado, sin aditivos. Suave, calientita y de sabor tradicional."},
+  {id:2, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Molida)", presentacion:"$22 · el kg", precio:22, unidad:"kg", imagen:"fotos/masa molida.jpg", emoji:"🌽", desc:"Masa fresca molida fina, lista para tortillas suaves hechas en casa."},
+  {id:3, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Quebrada)", presentacion:"$22 · el kg", precio:22, unidad:"kg", imagen:"fotos/masa quebrada.jpg", emoji:"🌽", desc:"Quebrada, ideal para gorditas, quesadillas, tamales y antojitos."},
+  {id:4, categoria:"Para acompañar", nombre:"Frijol Cocido", presentacion:"$20 · bolsa 500 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/frijol cocido.jpg", emoji:"🫘", desc:"Frijol cocido caldosito, listo para servir y acompañar tus tortillas."},
+  {id:5, categoria:"Para acompañar", nombre:"Nopales Cocidos", presentacion:"$20 · 250 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/nopales cocidos.jpg", emoji:"🌵", desc:"Nopales tiernos ya cocidos, perfectos para ensaladas o tacos."},
+  {id:6, categoria:"Para acompañar", nombre:"Salsa Roja de Tomate", presentacion:"$15 · 200 g", precio:15, unidad:"vaso", imagen:"fotos/salsa de tomate.jpg", emoji:"🌶️", desc:"Salsa roja casera de tomate, con el picor justo para tus tacos."},
 ];
 
-/* Número de WhatsApp del negocio en formato internacional, sin signos ni espacios.
-   Ejemplo México: 52 + 10 dígitos */
-const WHATSAPP_NEGOCIO = "524777308101";
+const WHATSAPP_NEGOCIO = "4777308101";
+const COSTO_ENVIO = 25;
+const ENVIO_GRATIS_DESDE = 200;
 
-/* ================= Estado ================= */
-let carrito = {}; // {productoId: cantidad}
+let carrito = {};
 
 function formatoMoneda(n){
   return "$" + n.toLocaleString("es-MX", {minimumFractionDigits:2, maximumFractionDigits:2});
 }
+function subtotalCarrito(){
+  return Object.entries(carrito).reduce((sum,[id,cant])=>{
+    const p = productos.find(p=>p.id==id);
+    return p ? sum + p.precio*cant : sum;
+  },0);
+}
+function costoEnvio(){
+  const s = subtotalCarrito();
+  if(s===0) return 0;
+  return s >= ENVIO_GRATIS_DESDE ? 0 : COSTO_ENVIO;
+}
+function totalConEnvio(){ return subtotalCarrito() + costoEnvio(); }
+function cantidadTotal(){ return Object.values(carrito).reduce((a,b)=>a+b,0); }
 
 function mediaProducto(p){
-  if (p.video){
-    return `<video src="${p.video}" autoplay muted loop playsinline></video>`;
-  }
-  if (p.imagen){
-    return `<img src="${p.imagen}" alt="${p.nombre} - ${p.descripcion}" loading="lazy">`;
-  }
+  if(p.video) return `<video src="${p.video}" autoplay muted loop playsinline></video>`;
+  if(p.imagen) return `<img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onerror="this.outerHTML='${p.emoji||'🛒'}'">`;
   return p.emoji || "🛒";
 }
 
 function pintarCatalogo(){
   const cont = document.getElementById("catalogo");
-  const categorias = [...new Set(productos.map(p => p.categoria))];
-  cont.innerHTML = categorias.map(cat => `
+  const cats = [...new Set(productos.map(p=>p.categoria))];
+  cont.innerHTML = cats.map(cat=>`
     <h3 class="categoria">${cat}</h3>
-    ${productos.filter(p => p.categoria === cat).map(p => `
+    ${productos.filter(p=>p.categoria===cat).map(p=>`
       <div class="producto">
         <div class="media">${mediaProducto(p)}</div>
         <div class="info">
           <p class="nombre">${p.nombre}</p>
-          <p class="descripcion">${p.descripcion}</p>
-          <p class="precio">${formatoMoneda(p.precio)} / ${p.precio === 20 ? "bolsa" : "kg"}</p>
+          <p class="desc">${p.desc}</p>
+          <span class="presentacion">${p.presentacion}</span>
+          <p class="precio">${formatoMoneda(p.precio)} <small>/ ${p.unidad}</small></p>
         </div>
         <div class="stepper">
-          <button onclick="cambiarCantidad(${p.id}, -1)">−</button>
-          <span class="cant" id="cant-${p.id}">${carrito[p.id] || 0}</span>
-          <button onclick="cambiarCantidad(${p.id}, 1)">+</button>
+          <div class="fila">
+            <button type="button" aria-label="Quitar" onclick="cambiarCantidad(${p.id},-1)">−</button>
+            <span class="cant" id="cant-${p.id}">${carrito[p.id]||0}</span>
+            <button type="button" aria-label="Agregar" onclick="cambiarCantidad(${p.id},1)">+</button>
+          </div>
+          <div class="et">AGREGAR</div>
         </div>
-      </div>
-    `).join("")}
+      </div>`).join("")}
   `).join("");
 }
 
-function cambiarCantidad(id, delta){
-  const actual = carrito[id] || 0;
-  const nueva = Math.max(0, actual + delta);
-  if (nueva === 0) delete carrito[id];
-  else carrito[id] = nueva;
-  document.getElementById(`cant-${id}`).textContent = nueva;
+function cambiarCantidad(id,delta){
+  const actual = carrito[id]||0;
+  const nueva = Math.max(0,actual+delta);
+  if(nueva===0) delete carrito[id]; else carrito[id]=nueva;
+  const el = document.getElementById(`cant-${id}`);
+  if(el) el.textContent = nueva;
   actualizarBarra();
 }
 
-function totalCarrito(){
-  return Object.entries(carrito).reduce((sum, [id, cant]) => {
-    const p = productos.find(p => p.id == id);
-    return sum + p.precio * cant;
-  }, 0);
-}
-
-function cantidadTotal(){
-  return Object.values(carrito).reduce((a,b) => a+b, 0);
+function textoEnvio(){
+  const s = subtotalCarrito();
+  const e = costoEnvio();
+  if(s===0) return "";
+  if(e===0) return "Envío GRATIS 🎉";
+  return `Envío $25 · Te faltan ${formatoMoneda(ENVIO_GRATIS_DESDE-s)} para gratis`;
 }
 
 function actualizarBarra(){
   const barra = document.getElementById("barraCarrito");
   const n = cantidadTotal();
-  if (n > 0){
+  if(n>0){
     barra.classList.add("activa");
-    document.getElementById("barraCantidad").textContent = n === 1 ? "1 producto" : `${n} productos`;
-    document.getElementById("barraTotal").textContent = formatoMoneda(totalCarrito());
-  } else {
-    barra.classList.remove("activa");
-  }
+    document.getElementById("barraCantidad").textContent = n===1 ? "1 producto" : `${n} productos`;
+    document.getElementById("barraTotal").textContent = formatoMoneda(totalConEnvio()) + " total";
+    document.getElementById("barraEnvio").textContent = textoEnvio();
+  } else barra.classList.remove("activa");
 }
 
-/* ================= Paneles ================= */
+function htmlResumen(){
+  const s = subtotalCarrito();
+  const e = costoEnvio();
+  const t = s+e;
+  const falta = ENVIO_GRATIS_DESDE - s;
+  const alerta = e===0
+    ? `<div class="alerta-envio ok">🎉 Tienes ENVÍO GRATIS por compra mayor a $200.</div>`
+    : `<div class="alerta-envio falta">🚚 Envío: $25. Te faltan ${formatoMoneda(falta)} para envío GRATIS (desde $200).</div>`;
+  return `
+    <div class="resumen">
+      <div class="fila"><span>Subtotal</span><span>${formatoMoneda(s)}</span></div>
+      <div class="fila ${e===0?'gratis':''}"><span>Envío ${e===0?'(GRATIS)':''}</span><span>${e===0?'GRATIS':formatoMoneda(e)}</span></div>
+      <div class="total-linea"><span>Total</span><span>${formatoMoneda(t)}</span></div>
+    </div>${alerta}`;
+}
+
 function abrirCarrito(){
   pintarCarrito();
   document.getElementById("fondo").classList.add("activo");
   document.getElementById("panelCarrito").classList.add("abierto");
 }
-
 function pintarCarrito(){
   const lista = document.getElementById("listaCarrito");
   const ids = Object.keys(carrito);
-  if (ids.length === 0){
+  if(ids.length===0){
     lista.innerHTML = `<div class="vacio">Aún no agregas productos.</div>`;
+    document.getElementById("resumenCarrito").innerHTML = "";
     document.getElementById("btnContinuar").disabled = true;
   } else {
     document.getElementById("btnContinuar").disabled = false;
-    lista.innerHTML = ids.map(id => {
-      const p = productos.find(p => p.id == id);
+    lista.innerHTML = ids.map(id=>{
+      const p = productos.find(p=>p.id==id);
       const cant = carrito[id];
-      return `
-        <div class="item-carrito">
-          <div>
-            <p class="nombre">${p.nombre}</p>
-            <p class="sub">${cant} × ${formatoMoneda(p.precio)}</p>
-          </div>
-          <div style="text-align:right">
-            <p class="nombre">${formatoMoneda(p.precio * cant)}</p>
-            <button class="quitar" onclick="quitarDelCarrito(${p.id})">Quitar</button>
-          </div>
-        </div>`;
+      return `<div class="item-carrito">
+        <div><p class="nombre">${p.nombre}</p><p class="sub">${cant} × ${formatoMoneda(p.precio)}</p></div>
+        <div style="text-align:right"><p class="nombre">${formatoMoneda(p.precio*cant)}</p>
+        <button class="quitar" onclick="quitarDelCarrito(${p.id})">Quitar</button></div>
+      </div>`;
     }).join("");
+    document.getElementById("resumenCarrito").innerHTML = htmlResumen();
   }
-  document.getElementById("totalCarrito").textContent = formatoMoneda(totalCarrito());
 }
-
 function quitarDelCarrito(id){
   delete carrito[id];
-  document.getElementById(`cant-${id}`).textContent = 0;
-  pintarCarrito();
-  actualizarBarra();
+  const el = document.getElementById(`cant-${id}`);
+  if(el) el.textContent = 0;
+  pintarCarrito(); actualizarBarra();
 }
-
 function irACheckout(){
   document.getElementById("panelCarrito").classList.remove("abierto");
+  document.getElementById("resumenCheckout").innerHTML = htmlResumen();
   document.getElementById("panelCheckout").classList.add("abierto");
 }
-
 function volverACarrito(){
   document.getElementById("panelCheckout").classList.remove("abierto");
   pintarCarrito();
   document.getElementById("panelCarrito").classList.add("abierto");
 }
-
 function cerrarTodo(){
   document.getElementById("fondo").classList.remove("activo");
   document.getElementById("panelCarrito").classList.remove("abierto");
   document.getElementById("panelCheckout").classList.remove("abierto");
 }
 
-/* ================= Envío del pedido ================= */
 function enviarPedido(){
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const direccion = document.getElementById("direccion").value.trim();
   const referencia = document.getElementById("referencia").value.trim();
-
   let valido = true;
   document.getElementById("errNombre").style.display = nombre ? "none" : "block";
   document.getElementById("errTelefono").style.display = /^\d{10}$/.test(telefono) ? "none" : "block";
   document.getElementById("errDireccion").style.display = direccion ? "none" : "block";
-  if (!nombre || !/^\d{10}$/.test(telefono) || !direccion) valido = false;
-  if (!valido) return;
+  if(!nombre || !/^\d{10}$/.test(telefono) || !direccion) valido = false;
+  if(!valido) return;
 
-  const lineasPedido = Object.entries(carrito).map(([id, cant]) => {
-    const p = productos.find(p => p.id == id);
-    return `• ${cant} x ${p.nombre} — ${formatoMoneda(p.precio * cant)}`;
-  }).join("%0A");
+  const s = subtotalCarrito();
+  const e = costoEnvio();
+  const t = s+e;
+  const lineas = Object.entries(carrito).map(([id,cant])=>{
+    const p = productos.find(p=>p.id==id);
+    return `• ${cant} x ${p.nombre} — ${formatoMoneda(p.precio*cant)}`;
+  }).join("\n");
 
-  const mensaje =
-`Hola, quiero hacer un pedido:%0A%0A${lineasPedido}%0A%0A*Total: ${formatoMoneda(totalCarrito())}*%0A%0A*Nombre:* ${nombre}%0A*Teléfono:* ${telefono}%0A*Dirección:* ${direccion}${referencia ? "%0A*Referencias:* " + referencia : ""}%0A%0APago: contraentrega (efectivo)`;
+  const msg =
+`Hola Tortilleria PRONIXMASA, quiero hacer un pedido:
 
-  const url = `https://wa.me/${WHATSAPP_NEGOCIO}?text=${mensaje}`;
-  window.open(url, "_blank");
+${lineas}
+
+Subtotal: ${formatoMoneda(s)}
+Envío: ${e===0 ? "GRATIS" : formatoMoneda(e)}
+*Total: ${formatoMoneda(t)}*
+
+*Nombre:* ${nombre}
+*Teléfono:* ${telefono}
+*Dirección:* ${direccion}${referencia ? "\n*Referencias:* " + referencia : ""}
+Pago: contraentrega (efectivo)`;
+
+  window.open(`https://wa.me/${WHATSAPP_NEGOCIO}?text=${encodeURIComponent(msg)}`, "_blank");
 }
 
-/* ================= Inicio ================= */
 pintarCatalogo();
 </script>
 
