@@ -159,6 +159,13 @@
   input:focus,textarea:focus{outline:2px solid var(--ladrillo);border-color:var(--ladrillo);}
   textarea{resize:vertical;min-height:64px;}
   .aviso-pago{margin-top:16px;background:var(--ladrillo-claro);border:1px solid var(--ladrillo);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--antracita);}
+  .btn-ubicacion{width:100%;margin-top:10px;background:#fff;color:var(--antracita);border:1.5px dashed var(--ladrillo);padding:12px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .btn-ubicacion:disabled{opacity:.6;cursor:wait;}
+  .ubi-msg{margin-top:8px;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:700;}
+  .ubi-msg.ok{background:#E8F5E9;border:1px solid #1E7A34;color:#1E7A34;}
+  .ubi-msg.err{background:#FDECEA;border:1px solid var(--ladrillo-osc);color:var(--ladrillo-osc);}
+  .ubi-msg a{color:inherit;font-weight:800;}
+  .ubi-msg .ubi-quitar{background:none;border:none;color:inherit;font-size:12.5px;font-weight:800;cursor:pointer;text-decoration:underline;padding:0;margin-left:6px;}
   .btn-primario{width:100%;margin-top:16px;background:var(--ladrillo);color:#fff;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;}
   .btn-primario:disabled{background:#C9BFA9;cursor:not-allowed;}
   .btn-secundario{width:100%;margin-top:10px;background:transparent;color:var(--antracita);border:1.5px solid var(--antracita);padding:13px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
@@ -251,6 +258,8 @@
   <label for="direccion">Dirección de entrega</label>
   <textarea id="direccion" placeholder="Calle, número, colonia"></textarea>
   <div class="error" id="errDireccion">Escribe la dirección donde te entregamos.</div>
+  <button type="button" class="btn-ubicacion" id="btnUbicacion" onclick="usarUbicacion()">📍 Usar mi ubicación actual</button>
+  <div class="ubi-msg" id="ubiMsg" style="display:none"></div>
   <label for="referencia">Referencias (opcional)</label>
   <textarea id="referencia" placeholder="Portón negro, entre panadería y farmacia..."></textarea>
   <div class="aviso-pago">💵 Pagas en efectivo cuando te entreguemos tu pedido.</div>
@@ -308,6 +317,41 @@ function verificarHorario(){
 }
 
 let carrito = {};
+let ubicacionCliente = null; // {lat, lng, url} se llena con el botón "Usar mi ubicación"
+
+function usarUbicacion(){
+  const btn = document.getElementById("btnUbicacion");
+  const msg = document.getElementById("ubiMsg");
+  if(!navigator.geolocation){
+    msg.className = "ubi-msg err"; msg.style.display = "block";
+    msg.textContent = "⚠️ Tu teléfono no permite compartir ubicación. Escribe tu dirección, con eso basta.";
+    return;
+  }
+  btn.disabled = true; btn.textContent = "⏳ Obteniendo tu ubicación...";
+  navigator.geolocation.getCurrentPosition(
+    (pos)=>{
+      const lat = pos.coords.latitude.toFixed(6);
+      const lng = pos.coords.longitude.toFixed(6);
+      ubicacionCliente = {lat, lng, url:`https://www.google.com/maps?q=${lat},${lng}`};
+      btn.disabled = false; btn.textContent = "📍 Actualizar mi ubicación";
+      msg.className = "ubi-msg ok"; msg.style.display = "block";
+      msg.innerHTML = `✅ Ubicación capturada. <a href="${ubicacionCliente.url}" target="_blank" rel="noopener">Ver en mapa</a><button type="button" class="ubi-quitar" onclick="quitarUbicacion()">quitar</button>`;
+    },
+    ()=>{
+      btn.disabled = false; btn.textContent = "📍 Usar mi ubicación actual";
+      msg.className = "ubi-msg err"; msg.style.display = "block";
+      msg.textContent = "⚠️ No se pudo obtener tu ubicación. Activa el GPS y permite el acceso, o escribe tu dirección.";
+    },
+    {enableHighAccuracy:true, timeout:15000, maximumAge:60000}
+  );
+}
+function quitarUbicacion(){
+  ubicacionCliente = null;
+  const btn = document.getElementById("btnUbicacion");
+  const msg = document.getElementById("ubiMsg");
+  btn.textContent = "📍 Usar mi ubicación actual";
+  msg.style.display = "none"; msg.innerHTML = "";
+}
 
 function formatoMoneda(n){
   return "$" + n.toLocaleString("es-MX", {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -494,7 +538,7 @@ Envío: ${e===0 ? "GRATIS" : formatoMoneda(e)}
 
 *Nombre:* ${nombre}
 *Teléfono:* ${telefono}
-*Dirección:* ${direccion}${referencia ? "\n*Referencias:* " + referencia : ""}
+*Dirección:* ${direccion}${ubicacionCliente ? "\n*Ubicación Maps:* " + ubicacionCliente.url : ""}${referencia ? "\n*Referencias:* " + referencia : ""}
 Pago: contraentrega (efectivo)`;
 
   window.open(`https://wa.me/${WHATSAPP_NEGOCIO}?text=${encodeURIComponent(msg)}`, "_blank");
