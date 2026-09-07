@@ -168,6 +168,15 @@
   .wa-float .burbuja{background:#fff;border:1px solid var(--linea);color:var(--antracita);font-size:12.5px;font-weight:800;border-radius:20px;padding:7px 12px;box-shadow:0 4px 14px rgba(0,0,0,.18);}
   .wa-float .icono{width:56px;height:56px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3);flex-shrink:0;}
   .wa-float .icono svg{width:30px;height:30px;fill:#fff;}
+  .aviso-cierre{max-width:520px;margin:12px auto 0;padding:10px 14px;background:#FFF4E0;border:1.5px solid #E8930C;color:#7A4A00;border-radius:12px;font-size:13.5px;text-align:center;}
+  #pantallaCerrado{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:var(--antracita);padding:24px;}
+  .cerrado-card{background:#fff;border-radius:20px;padding:30px 24px;max-width:380px;width:100%;text-align:center;border-top:6px solid var(--ladrillo);}
+  .cerrado-emoji{font-size:48px;}
+  .cerrado-card h2{color:var(--antracita);margin:10px 0 6px;font-size:22px;}
+  .cerrado-card p{font-size:14px;color:#55555E;margin:8px 0;}
+  .cerrado-horario{background:var(--ladrillo-claro);border:1px solid var(--ladrillo);border-radius:12px;padding:12px;font-size:14.5px;color:var(--antracita);}
+  .cerrado-sub{font-size:13px;}
+  .cerrado-wa{display:inline-block;margin-top:12px;background:#25D366;color:#fff;font-weight:800;font-size:14px;text-decoration:none;padding:13px 20px;border-radius:12px;}
 </style>
 </head>
 <body>
@@ -183,6 +192,19 @@
     <span>Horario para pedidos: 8:00 AM - 5:00 PM Todos los dias</span>
   </div>
 </header>
+
+<div class="aviso-cierre" id="avisoCierre" style="display:none"></div>
+
+<div id="pantallaCerrado" style="display:none">
+  <div class="cerrado-card">
+    <div class="cerrado-emoji">🌙</div>
+    <h2>¡Gracias por visitarnos!</h2>
+    <p>Por el momento estamos <b>fuera del horario de pedidos</b>.</p>
+    <p class="cerrado-horario">🕗 Nuestro horario de pedidos es<br><b>de 8:00 AM a 5:00 PM, todos los días</b></p>
+    <p class="cerrado-sub">Vuelve dentro del horario y con gusto preparamos tu pedido fresquecito. 🌽</p>
+    <a class="cerrado-wa" href="https://wa.me/524777308101?text=Hola%20Tortilleria%20PRONIXMASA%2C%20tengo%20una%20duda" target="_blank" rel="noopener">💬 ¿Dudas? Escríbenos</a>
+  </div>
+</div>
 
 <main id="catalogo"></main>
 
@@ -244,13 +266,46 @@ const productos = [
   {id:3, disponible:true, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Molida)", presentacion:"$20 · el kg", precio:20, unidad:"kg", imagen:"fotos/masa molida.jpg", emoji:"🌽", desc:"Masa fresca molida fina, lista para tortillas suaves hechas en casa."},
   {id:4, disponible:true, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Quebrada)", presentacion:"$22 · el kg", precio:22, unidad:"kg", imagen:"fotos/masa quebrada.jpg", emoji:"🌽", desc:"Quebrada, ideal para gorditas, quesadillas, tamales y antojitos."},
   {id:5, disponible:true, categoria:"Para acompañar", nombre:"Frijol Cocido", presentacion:"$20 · bolsa 500 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/frijol cocido.jpg", emoji:"🫘", desc:"Frijol cocido caldosito, listo para servir y acompañar tus tortillas."},
-  {id:6, disponible:false, categoria:"Para acompañar", nombre:"Nopales Cocidos", presentacion:"$20 · 250 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/nopales cocidos.jpg", emoji:"🌵", desc:"Nopales tiernos ya cocidos, perfectos para ensaladas o tacos."},
+  {id:6, disponible:true, categoria:"Para acompañar", nombre:"Nopales Cocidos", presentacion:"$20 · 250 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/nopales cocidos.jpg", emoji:"🌵", desc:"Nopales tiernos ya cocidos, perfectos para ensaladas o tacos."},
   {id:7, disponible:true, categoria:"Para acompañar", nombre:"Salsa Roja de Tomate", presentacion:"$15 · 200 g", precio:15, unidad:"vaso", imagen:"fotos/salsa de tomate.jpg", emoji:"🌶️", desc:"Salsa roja casera de tomate, con el picor justo para tus tacos."},
 ];
 
 const WHATSAPP_NEGOCIO = "524777308101";
 const COSTO_ENVIO = 25;
 const ENVIO_GRATIS_DESDE = 200;
+
+/* ============ Horario de pedidos (usa la hora del teléfono del cliente) ============
+   Para cambiar el horario solo ajusta estos 3 valores. */
+const HORA_APERTURA = 8;   // 8:00 AM
+const HORA_CIERRE = 17;    // 5:00 PM
+const AVISO_MINUTOS = 30;  // avisar durante los últimos 30 min antes del cierre
+
+function estadoHorario(ahora){
+  const h = ahora || new Date();
+  const mins = h.getHours()*60 + h.getMinutes();
+  const abre = HORA_APERTURA*60, cierra = HORA_CIERRE*60;
+  return {abierto: mins >= abre && mins < cierra, paraCerrar: cierra - mins};
+}
+function verificarHorario(){
+  const est = estadoHorario();
+  const cerrado = document.getElementById("pantallaCerrado");
+  const aviso = document.getElementById("avisoCierre");
+  if(!est.abierto){
+    if(cerrado) cerrado.style.display = "flex";
+    if(aviso) aviso.style.display = "none";
+    cerrarTodo();
+    actualizarBarra();
+    return false;
+  }
+  if(cerrado) cerrado.style.display = "none";
+  if(aviso){
+    if(est.paraCerrar <= AVISO_MINUTOS){
+      aviso.style.display = "block";
+      aviso.innerHTML = `⏰ Cerramos los pedidos a las 5:00 PM · te quedan <b>${est.paraCerrar} min</b>. ¡Haz tu pedido a tiempo!`;
+    } else aviso.style.display = "none";
+  }
+  return true;
+}
 
 let carrito = {};
 
@@ -313,6 +368,7 @@ function pintarCatalogo(){
 function cambiarCantidad(id,delta){
   const p = productos.find(p=>p.id==id);
   if(p && p.disponible===false && delta>0) return;
+  if(delta>0 && !estadoHorario().abierto){ verificarHorario(); return; }
   const actual = carrito[id]||0;
   const nueva = Math.max(0,actual+delta);
   if(nueva===0) delete carrito[id]; else carrito[id]=nueva;
@@ -331,6 +387,7 @@ function textoEnvio(){
 
 function actualizarBarra(){
   const barra = document.getElementById("barraCarrito");
+  if(!estadoHorario().abierto){ barra.classList.remove("activa"); return; }
   const n = cantidadTotal();
   if(n>0){
     barra.classList.add("activa");
@@ -357,6 +414,7 @@ function htmlResumen(){
 }
 
 function abrirCarrito(){
+  if(!verificarHorario()) return;
   pintarCarrito();
   document.getElementById("fondo").classList.add("activo");
   document.getElementById("panelCarrito").classList.add("abierto");
@@ -405,6 +463,7 @@ function cerrarTodo(){
 }
 
 function enviarPedido(){
+  if(!verificarHorario()) return;
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const direccion = document.getElementById("direccion").value.trim();
@@ -442,6 +501,8 @@ Pago: contraentrega (efectivo)`;
 }
 
 pintarCatalogo();
+verificarHorario();
+setInterval(verificarHorario, 30000);
 </script>
 
 </body>
