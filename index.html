@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Abarrotes Doña Lupe · Pedidos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --tinta:#233d2c;
+    --papel:#f4efe2;
+    --hoja:#4c7a5a;
+    --hoja-osc:#365a41;
+    --mostaza:#e2a33e;
+    --jitomate:#c1462f;
+    --linea:#d8cfb8;
+    --blanco:#fffdf8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  html,body{
+    background:var(--papel);
+    color:var(--tinta);
+    font-family:'Nunito Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.brand{font-family:'Fraunces', serif;}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:28px 20px 22px;
+    border-bottom:2px solid var(--linea);
+  }
+  .brand{
+    font-size:26px;
+    font-weight:600;
+    margin:0;
+    color:var(--hoja-osc);
+  }
+  .brand span{color:var(--jitomate);}
+  .subtitulo{
+    margin:6px 0 0;
+    font-size:14px;
+    color:#5a5346;
+  }
+  .franja{
+    margin-top:14px;
+    display:flex;
+    gap:10px;
+    font-size:12.5px;
+    color:var(--hoja-osc);
+    flex-wrap:wrap;
+  }
+  .franja span{
+    background:var(--blanco);
+    border:1px solid var(--linea);
+    border-radius:20px;
+    padding:5px 12px;
+    font-weight:700;
+  }
+
+  /* ---------- Catálogo ---------- */
+  main{
+    max-width:520px;
+    margin:0 auto;
+    padding:22px 16px 140px;
+  }
+  .categoria{
+    font-size:13px;
+    text-transform:none;
+    letter-spacing:.2px;
+    color:var(--hoja-osc);
+    font-weight:700;
+    margin:26px 0 12px;
+    padding-bottom:6px;
+    border-bottom:2px solid var(--hoja);
+    display:inline-block;
+  }
+  .producto{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--blanco);
+    border:1px solid var(--linea);
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:10px;
+  }
+  .media{
+    font-size:30px;
+    width:58px;
+    height:58px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#eef3ea;
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .media img, .media video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .info{flex:1;min-width:0;}
+  .nombre{font-weight:700;font-size:15px;margin:0;}
+  .precio{color:var(--hoja-osc);font-weight:700;font-size:14px;margin-top:2px;}
+  .stepper{
+    display:flex;
+    align-items:center;
+    gap:0;
+    border:1.5px solid var(--hoja);
+    border-radius:10px;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .stepper button{
+    width:32px;height:32px;
+    border:none;
+    background:var(--blanco);
+    color:var(--hoja-osc);
+    font-size:18px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .stepper button:active{background:#eef3ea;}
+  .stepper .cant{
+    width:26px;
+    text-align:center;
+    font-weight:700;
+    font-size:14px;
+  }
+
+  /* ---------- Barra flotante ---------- */
+  .barra-carrito{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    background:var(--hoja-osc);
+    color:var(--blanco);
+    padding:14px 18px;
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 -6px 18px rgba(0,0,0,.15);
+    z-index:20;
+  }
+  .barra-carrito.activa{display:flex;}
+  .barra-carrito .texto{font-size:14px;}
+  .barra-carrito .texto b{display:block;font-size:16px;}
+  .barra-carrito button{
+    background:var(--mostaza);
+    color:var(--tinta);
+    border:none;
+    padding:10px 18px;
+    border-radius:10px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+  }
+
+  /* ---------- Panel (carrito / checkout) ---------- */
+  .fondo-panel{
+    position:fixed;inset:0;
+    background:rgba(35,61,44,.45);
+    display:none;
+    z-index:30;
+  }
+  .fondo-panel.activo{display:block;}
+  .panel{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    max-width:520px;
+    margin:0 auto;
+    background:var(--papel);
+    border-radius:20px 20px 0 0;
+    max-height:88vh;
+    overflow-y:auto;
+    padding:20px 18px 26px;
+    transform:translateY(100%);
+    transition:transform .28s ease;
+    z-index:31;
+  }
+  .panel.abierto{transform:translateY(0);}
+  .panel-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .panel-header h2{margin:0;font-size:19px;color:var(--hoja-osc);}
+  .cerrar{
+    background:none;border:none;font-size:22px;color:var(--tinta);cursor:pointer;line-height:1;
+  }
+  .item-carrito{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 0;border-bottom:1px solid var(--linea);gap:10px;
+  }
+  .item-carrito .nombre{font-size:14px;}
+  .item-carrito .sub{font-size:12.5px;color:#6b6455;}
+  .quitar{background:none;border:none;color:var(--jitomate);font-size:13px;font-weight:700;cursor:pointer;padding:0;margin-top:4px;}
+  .total-linea{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:16px;padding-top:14px;border-top:2px solid var(--hoja-osc);
+    font-weight:700;font-size:17px;
+  }
+  .vacio{text-align:center;color:#8b8271;padding:30px 0;font-size:14px;}
+
+  /* ---------- Formulario ---------- */
+  label{
+    display:block;font-size:13px;font-weight:700;margin:14px 0 6px;color:var(--hoja-osc);
+  }
+  input[type=text], input[type=tel], textarea{
+    width:100%;
+    border:1.5px solid var(--linea);
+    background:var(--blanco);
+    border-radius:10px;
+    padding:11px 12px;
+    font-size:15px;
+    font-family:inherit;
+    color:var(--tinta);
+  }
+  input:focus, textarea:focus{outline:2px solid var(--hoja);border-color:var(--hoja);}
+  textarea{resize:vertical;min-height:64px;}
+  .aviso-pago{
+    margin-top:16px;
+    background:#eef3ea;
+    border:1px solid var(--hoja);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:13px;
+    color:var(--hoja-osc);
+  }
+  .btn-primario{
+    width:100%;
+    margin-top:20px;
+    background:var(--jitomate);
+    color:var(--blanco);
+    border:none;
+    padding:15px;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-primario:disabled{background:#c9bfa9;cursor:not-allowed;}
+  .btn-secundario{
+    width:100%;
+    margin-top:10px;
+    background:transparent;
+    color:var(--hoja-osc);
+    border:1.5px solid var(--hoja);
+    padding:13px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .error{color:var(--jitomate);font-size:12.5px;margin-top:4px;display:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 class="brand">Abarrotes <span>Doña Lupe</span></h1>
+  <p class="subtitulo">Escanea, elige y te lo llevamos a tu puerta.</p>
+  <div class="franja">
+    <span>Pago contraentrega</span>
+    <span>Entrega el mismo día</span>
+  </div>
+</header>
+
+<main id="catalogo"></main>
+
+<div class="barra-carrito" id="barraCarrito">
+  <div class="texto">
+    <span id="barraCantidad">0 productos</span>
+    <b id="barraTotal">$0.00</b>
+  </div>
+  <button onclick="abrirCarrito()">Ver carrito</button>
+</div>
+
+<div class="fondo-panel" id="fondo" onclick="cerrarTodo()"></div>
+
+<!-- Panel carrito -->
+<div class="panel" id="panelCarrito">
+  <div class="panel-header">
+    <h2>Tu pedido</h2>
+    <button class="cerrar" onclick="cerrarTodo()">&times;</button>
+  </div>
+  <div id="listaCarrito"></div>
+  <div class="total-linea">
+    <span>Total</span>
+    <span id="totalCarrito">$0.00</span>
+  </div>
+  <button class="btn-primario" id="btnContinuar" onclick="irACheckout()">Continuar con la entrega</button>
+</div>
+
+<!-- Panel checkout -->
+<div class="panel" id="panelCheckout">
+  <div class="panel-header">
+    <h2>Datos de entrega</h2>
+    <button class="cerrar" onclick="cerrarTodo()">&times;</button>
+  </div>
+
+  <label for="nombre">Nombre completo</label>
+  <input type="text" id="nombre" placeholder="¿Cómo te llamas?">
+  <div class="error" id="errNombre">Escribe tu nombre.</div>
+
+  <label for="telefono">Teléfono</label>
+  <input type="tel" id="telefono" placeholder="10 dígitos">
+  <div class="error" id="errTelefono">Escribe un teléfono a 10 dígitos.</div>
+
+  <label for="direccion">Dirección de entrega</label>
+  <textarea id="direccion" placeholder="Calle, número, colonia"></textarea>
+  <div class="error" id="errDireccion">Escribe la dirección donde te entregamos.</div>
+
+  <label for="referencia">Referencias (opcional)</label>
+  <textarea id="referencia" placeholder="Portón negro, entre panadería y farmacia..."></textarea>
+
+  <div class="aviso-pago">💵 Pagas en efectivo cuando te entreguemos tu pedido.</div>
+
+  <button class="btn-primario" onclick="enviarPedido()">Confirmar pedido por WhatsApp</button>
+  <button class="btn-secundario" onclick="volverACarrito()">Regresar al carrito</button>
+</div>
+
+<script>
+/* ================= Datos del catálogo =================
+   Reemplaza esto con tus productos reales. */
+/* Cada producto puede traer:
+   - imagen: "fotos/aguacate.jpg"  (una foto)
+   - video:  "fotos/aguacate.mp4" (un video corto, opcional; si existe, se usa en vez de la imagen)
+   - emoji:  se usa solo como respaldo si no hay imagen ni video */
+const productos = [
+  {id:1, categoria:"Frutas y verduras", nombre:"Aguacate (kg)", precio:45, imagen:"fotos/aguacate.jpg", emoji:"🥑"},
+  {id:2, categoria:"Frutas y verduras", nombre:"Jitomate (kg)", precio:28, imagen:"fotos/jitomate.jpg", emoji:"🍅"},
+  {id:3, categoria:"Frutas y verduras", nombre:"Cebolla (kg)", precio:22, imagen:"fotos/cebolla.jpg", emoji:"🧅"},
+  {id:4, categoria:"Despensa", nombre:"Huevo (docena)", precio:38, imagen:"fotos/huevo.jpg", emoji:"🥚"},
+  {id:5, categoria:"Despensa", nombre:"Frijol (kg)", precio:32, imagen:"fotos/frijol.jpg", emoji:"🫘"},
+  {id:6, categoria:"Despensa", nombre:"Arroz (kg)", precio:26, imagen:"fotos/arroz.jpg", emoji:"🍚"},
+  {id:7, categoria:"Bebidas", nombre:"Refresco 2L", precio:32, video:"fotos/refresco.mp4", emoji:"🥤"},
+  {id:8, categoria:"Bebidas", nombre:"Agua natural 1L", precio:14, imagen:"fotos/agua.jpg", emoji:"💧"},
+];
+
+/* Número de WhatsApp del negocio en formato internacional, sin signos ni espacios.
+   Ejemplo México: 52 + 10 dígitos */
+const WHATSAPP_NEGOCIO = "5214771234567";
+
+/* ================= Estado ================= */
+let carrito = {}; // {productoId: cantidad}
+
+function formatoMoneda(n){
+  return "$" + n.toLocaleString("es-MX", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function mediaProducto(p){
+  if (p.video){
+    return `<video src="${p.video}" autoplay muted loop playsinline></video>`;
+  }
+  if (p.imagen){
+    return `<img src="${p.imagen}" alt="${p.nombre}" loading="lazy">`;
+  }
+  return p.emoji || "🛒";
+}
+
+function pintarCatalogo(){
+  const cont = document.getElementById("catalogo");
+  const categorias = [...new Set(productos.map(p => p.categoria))];
+  cont.innerHTML = categorias.map(cat => `
+    <h3 class="categoria">${cat}</h3>
+    ${productos.filter(p => p.categoria === cat).map(p => `
+      <div class="producto">
+        <div class="media">${mediaProducto(p)}</div>
+        <div class="info">
+          <p class="nombre">${p.nombre}</p>
+          <p class="precio">${formatoMoneda(p.precio)}</p>
+        </div>
+        <div class="stepper">
+          <button onclick="cambiarCantidad(${p.id}, -1)">−</button>
+          <span class="cant" id="cant-${p.id}">${carrito[p.id] || 0}</span>
+          <button onclick="cambiarCantidad(${p.id}, 1)">+</button>
+        </div>
+      </div>
+    `).join("")}
+  `).join("");
+}
+
+function cambiarCantidad(id, delta){
+  const actual = carrito[id] || 0;
+  const nueva = Math.max(0, actual + delta);
+  if (nueva === 0) delete carrito[id];
+  else carrito[id] = nueva;
+  document.getElementById(`cant-${id}`).textContent = nueva;
+  actualizarBarra();
+}
+
+function totalCarrito(){
+  return Object.entries(carrito).reduce((sum, [id, cant]) => {
+    const p = productos.find(p => p.id == id);
+    return sum + p.precio * cant;
+  }, 0);
+}
+
+function cantidadTotal(){
+  return Object.values(carrito).reduce((a,b) => a+b, 0);
+}
+
+function actualizarBarra(){
+  const barra = document.getElementById("barraCarrito");
+  const n = cantidadTotal();
+  if (n > 0){
+    barra.classList.add("activa");
+    document.getElementById("barraCantidad").textContent = n === 1 ? "1 producto" : `${n} productos`;
+    document.getElementById("barraTotal").textContent = formatoMoneda(totalCarrito());
+  } else {
+    barra.classList.remove("activa");
+  }
+}
+
+/* ================= Paneles ================= */
+function abrirCarrito(){
+  pintarCarrito();
+  document.getElementById("fondo").classList.add("activo");
+  document.getElementById("panelCarrito").classList.add("abierto");
+}
+
+function pintarCarrito(){
+  const lista = document.getElementById("listaCarrito");
+  const ids = Object.keys(carrito);
+  if (ids.length === 0){
+    lista.innerHTML = `<div class="vacio">Aún no agregas productos.</div>`;
+    document.getElementById("btnContinuar").disabled = true;
+  } else {
+    document.getElementById("btnContinuar").disabled = false;
+    lista.innerHTML = ids.map(id => {
+      const p = productos.find(p => p.id == id);
+      const cant = carrito[id];
+      return `
+        <div class="item-carrito">
+          <div>
+            <p class="nombre">${p.nombre}</p>
+            <p class="sub">${cant} × ${formatoMoneda(p.precio)}</p>
+          </div>
+          <div style="text-align:right">
+            <p class="nombre">${formatoMoneda(p.precio * cant)}</p>
+            <button class="quitar" onclick="quitarDelCarrito(${p.id})">Quitar</button>
+          </div>
+        </div>`;
+    }).join("");
+  }
+  document.getElementById("totalCarrito").textContent = formatoMoneda(totalCarrito());
+}
+
+function quitarDelCarrito(id){
+  delete carrito[id];
+  document.getElementById(`cant-${id}`).textContent = 0;
+  pintarCarrito();
+  actualizarBarra();
+}
+
+function irACheckout(){
+  document.getElementById("panelCarrito").classList.remove("abierto");
+  document.getElementById("panelCheckout").classList.add("abierto");
+}
+
+function volverACarrito(){
+  document.getElementById("panelCheckout").classList.remove("abierto");
+  pintarCarrito();
+  document.getElementById("panelCarrito").classList.add("abierto");
+}
+
+function cerrarTodo(){
+  document.getElementById("fondo").classList.remove("activo");
+  document.getElementById("panelCarrito").classList.remove("abierto");
+  document.getElementById("panelCheckout").classList.remove("abierto");
+}
+
+/* ================= Envío del pedido ================= */
+function enviarPedido(){
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const direccion = document.getElementById("direccion").value.trim();
+  const referencia = document.getElementById("referencia").value.trim();
+
+  let valido = true;
+  document.getElementById("errNombre").style.display = nombre ? "none" : "block";
+  document.getElementById("errTelefono").style.display = /^\d{10}$/.test(telefono) ? "none" : "block";
+  document.getElementById("errDireccion").style.display = direccion ? "none" : "block";
+  if (!nombre || !/^\d{10}$/.test(telefono) || !direccion) valido = false;
+  if (!valido) return;
+
+  const lineasPedido = Object.entries(carrito).map(([id, cant]) => {
+    const p = productos.find(p => p.id == id);
+    return `• ${cant} x ${p.nombre} — ${formatoMoneda(p.precio * cant)}`;
+  }).join("%0A");
+
+  const mensaje =
+`Hola, quiero hacer un pedido:%0A%0A${lineasPedido}%0A%0A*Total: ${formatoMoneda(totalCarrito())}*%0A%0A*Nombre:* ${nombre}%0A*Teléfono:* ${telefono}%0A*Dirección:* ${direccion}${referencia ? "%0A*Referencias:* " + referencia : ""}%0A%0APago: contraentrega (efectivo)`;
+
+  const url = `https://wa.me/${WHATSAPP_NEGOCIO}?text=${mensaje}`;
+  window.open(url, "_blank");
+}
+
+/* ================= Inicio ================= */
+pintarCatalogo();
+</script>
+
+</body>
+</html>
