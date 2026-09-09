@@ -152,12 +152,22 @@
   .vacio{text-align:center;color:var(--muted);padding:30px 0;font-size:14px;}
 
   label{display:block;font-size:13px;font-weight:800;margin:14px 0 6px;color:var(--antracita);}
-  input[type=text],input[type=tel],textarea{
+  input[type=text],input[type=tel],select,textarea{
     width:100%;border:1.5px solid var(--linea);background:#fff;border-radius:10px;
     padding:12px;font-size:16px;font-family:inherit;color:var(--texto);
   }
-  input:focus,textarea:focus{outline:2px solid var(--ladrillo);border-color:var(--ladrillo);}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--ladrillo);border-color:var(--ladrillo);}
+  select{appearance:auto;}
   textarea{resize:vertical;min-height:64px;}
+  .pasos-pedido{background:var(--tarjeta);border:1px solid var(--linea);border-radius:14px;padding:13px 14px;margin:4px 0 18px;box-shadow:0 2px 8px rgba(43,43,48,.05);}
+  body > .pasos-pedido{max-width:520px;margin:18px auto 0;padding:13px 16px;}
+  .pasos-pedido b{display:block;font-size:14px;margin-bottom:5px;}
+  .pasos-pedido p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.45;}
+  .cobertura-aviso{display:none;margin-top:10px;border-radius:10px;padding:11px 12px;font-size:13px;line-height:1.45;}
+  .cobertura-aviso.sin-cobertura{display:block;background:#FDECEA;border:1px solid var(--ladrillo-osc);color:var(--ladrillo-osc);}
+  .cobertura-aviso.con-cobertura{display:block;background:#E8F5E9;border:1px solid #1E7A34;color:#1E7A34;}
+  .cobertura-aviso a{color:inherit;font-weight:800;}
+  .nota-confirmacion{margin:10px 0 0;font-size:12.5px;line-height:1.4;color:var(--muted);text-align:center;}
   .aviso-pago{margin-top:16px;background:var(--ladrillo-claro);border:1px solid var(--ladrillo);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--antracita);}
   .btn-ubicacion{width:100%;margin-top:10px;background:#fff;color:var(--antracita);border:1.5px dashed var(--ladrillo);padding:12px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
   .btn-ubicacion:disabled{opacity:.6;cursor:wait;}
@@ -191,11 +201,11 @@
 <header>
   <h1 class="brand">Tortilleria <span>PRONIXMASA</span></h1>
   <p class="subtitulo">SUCURSAL OLIVOS-ARBIDE.</p>
-  <p class="subtitulo">De nuestro nixtamal a tu mesa. Pide por WhatsApp.</p>
+  <p class="subtitulo">De nuestro nixtamal a tu mesa. Haz tu pedido aquí.</p>
   <div class="franja">
     <span class="dest">Envío $25 · GRATIS desde $200</span>
     <span>Pago contraentrega</span>
-    <span>Zona de entrega: Arbide - Olivos</span>
+    <span>Consulta la cobertura al finalizar</span>
     <span>Horario para pedidos: 8:00 AM - 5:00 PM Todos los dias</span>
   </div>
 </header>
@@ -213,12 +223,17 @@
   </div>
 </div>
 
+<section class="pasos-pedido" aria-label="Cómo realizar tu pedido">
+  <b>Tu pedido se arma aquí, en 3 pasos</b>
+  <p>1. Elige tus productos. &nbsp; 2. Agrega colonia, calle y número. &nbsp; 3. Confirma tu pedido. Para dudas o para revisar zonas más retiradas, escríbenos por WhatsApp.</p>
+</section>
+
 <main id="catalogo"></main>
 
 <footer>Tortilleria PRONIXMASA · Producto fresco del día<br>Santa Ana #201 Col. Los Olivos, León, Gto.</footer>
 
 <a class="wa-float" href="https://wa.me/524777308101?text=Hola%20Tortilleria%20PRONIXMASA%2C%20tengo%20una%20duda" target="_blank" rel="noopener" aria-label="¿Tienes dudas? Escríbenos por WhatsApp">
-  <span class="burbuja">¿Dudas? Escríbenos</span>
+  <span class="burbuja">¿Tienes dudas? Escríbenos.</span>
   <span class="icono"><svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.4.7 4.6 2 6.5L4 29l7.7-2c1.8 1 3.9 1.6 6.1 1.6h.1c6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.9h-.1c-1.9 0-3.7-.5-5.3-1.5l-.4-.2-4.6 1.2 1.2-4.4-.3-.4c-1-1.7-1.6-3.6-1.6-5.6C5 9.6 10.5 5 16.1 5S27 9.5 27 15.1 22.6 24.9 16 24.9zm5.5-8.1c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5L14.5 9c-.1-.3-.4-.3-.6-.3h-.5c-.2 0-.5.2-.7.5-.2.3-.9.9-.9 2.2s.9 2.5 1.1 2.7c.1.2 1.9 2.9 4.5 4.1 1.7.7 2.3.8 3.1.6.5-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3z"/></svg></span>
 </a>
 
@@ -249,43 +264,61 @@
     <button class="cerrar" onclick="cerrarTodo()">&times;</button>
   </div>
   <div id="resumenCheckout"></div>
+  <div class="pasos-pedido">
+    <b>Estás a un paso de terminar tu pedido</b>
+    <p>Completa tus datos y confirma. WhatsApp está disponible únicamente para dudas o consultas.</p>
+  </div>
   <label for="nombre">Nombre completo</label>
   <input type="text" id="nombre" placeholder="¿Cómo te llamas?" autocomplete="name">
   <div class="error" id="errNombre">Escribe tu nombre.</div>
   <label for="telefono">Teléfono</label>
   <input type="tel" id="telefono" placeholder="10 dígitos" inputmode="numeric" autocomplete="tel">
   <div class="error" id="errTelefono">Escribe un teléfono a 10 dígitos.</div>
-  <label for="direccion">Dirección de entrega</label>
-  <textarea id="direccion" placeholder="Calle, número, colonia"></textarea>
-  <div class="error" id="errDireccion">Escribe la dirección donde te entregamos.</div>
+  <label for="colonia">Colonia de entrega</label>
+  <select id="colonia" onchange="cambiarColonia()" aria-describedby="avisoCobertura">
+    <option value="">Selecciona tu colonia</option>
+  </select>
+  <div class="error" id="errColonia">Selecciona una colonia para continuar.</div>
+  <div class="cobertura-aviso" id="avisoCobertura" aria-live="polite"></div>
+  <label for="direccion">Calle y número</label>
+  <textarea id="direccion" placeholder="Ej. Calle Reforma #123"></textarea>
+  <div class="error" id="errDireccion">Escribe la calle y número para la entrega.</div>
   <button type="button" class="btn-ubicacion" id="btnUbicacion" onclick="usarUbicacion()">📍 Usar mi ubicación actual</button>
   <div class="ubi-msg" id="ubiMsg" style="display:none"></div>
   <label for="referencia">Referencias (opcional)</label>
   <textarea id="referencia" placeholder="Portón negro, entre panadería y farmacia..."></textarea>
   <div class="aviso-pago">💵 Pagas en efectivo cuando te entreguemos tu pedido.</div>
-  <button class="btn-primario" onclick="enviarPedido()">Confirmar pedido por WhatsApp</button>
+  <button class="btn-primario" id="btnConfirmarPedido" onclick="enviarPedido()">Confirmar mi pedido</button>
+  <p class="nota-confirmacion">¿Tienes una duda antes de pedir? Usa el botón de WhatsApp.</p>
   <button class="btn-secundario" onclick="volverACarrito()">Regresar al carrito</button>
 </div>
 
 <script>
 /* Para marcar un producto como AGOTADO solo cambia disponible:true por disponible:false en su línea. */
 const productos = [
-  {id:1, disponible:true, categoria:"Tortillas y Masa", nombre:"Tortilla de Maíz (Grande 13.5 cm)", presentacion:"$24 · el kg", precio:24, unidad:"kg", imagen:"fotos/tortilla de maiz.jpg", emoji:"🫓", desc:"Tortilla elaborada solamente con maíz nixtamalizado, sin aditivos. Suave, calientita y de sabor tradicional."},
-  {id:2, disponible:true, categoria:"Tortillas y Masa", nombre:"Tortilla de Maíz (mediana 11.5 cm)", presentacion:"$24 · el kg", precio:24, unidad:"kg", imagen:"fotos/tortilla de maiz 14.jpg", emoji:"🫓", desc:"Tortilla mediana especial para tacos al vapor, taquera"},
-  {id:3, disponible:true, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Molida)", presentacion:"$20 · el kg", precio:20, unidad:"kg", imagen:"fotos/masa molida.jpg", emoji:"🌽", desc:"Masa fresca molida fina, lista para tortillas suaves hechas en casa."},
-  {id:4, disponible:true, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Quebrada)", presentacion:"$22 · el kg", precio:22, unidad:"kg", imagen:"fotos/masa quebrada.jpg", emoji:"🌽", desc:"Quebrada, ideal para gorditas, quesadillas, tamales y antojitos."},
-  {id:5, disponible:true, categoria:"Para acompañar", nombre:"Frijol Cocido", presentacion:"$20 · bolsa 500 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/frijol cocido.jpg", emoji:"🫘", desc:"Frijol cocido caldosito, listo para servir y acompañar tus tortillas."},
-  {id:6, disponible:true, categoria:"Para acompañar", nombre:"Nopales Cocidos", presentacion:"$20 · 250 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/nopales cocidos.jpg", emoji:"🌵", desc:"Nopales tiernos ya cocidos, perfectos para ensaladas o tacos."},
-  {id:7, disponible:true, categoria:"Para acompañar", nombre:"Salsa Roja de Tomate", presentacion:"$15 · 200 g", precio:15, unidad:"vaso", imagen:"fotos/salsa de tomate.jpg", emoji:"🌶️", desc:"Salsa roja casera de tomate, con el picor justo para tus tacos."},
+  {id:1, disponible:true, categoria:"Tortillas y Masa", nombre:"Tortilla de Maíz (Grande 13.5 cm)", presentacion:"Venta por kilo", precio:24, unidad:"kg", imagen:"fotos/tortilla de maiz.jpg", emoji:"🫓", desc:"Tortilla elaborada solamente con maíz nixtamalizado, sin aditivos. Suave, calientita y de sabor tradicional."},
+  {id:2, disponible:true, categoria:"Tortillas y Masa", nombre:"Tortilla de Maíz (mediana 11.5 cm)", presentacion:"Venta por kilo", precio:24, unidad:"kg", imagen:"fotos/tortilla de maiz 14.jpg", emoji:"🫓", desc:"Tortilla mediana especial para tacos al vapor, taquera."},
+  {id:3, disponible:true, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Molida)", presentacion:"Venta por kilo", precio:20, unidad:"kg", imagen:"fotos/masa molida.jpg", emoji:"🌽", desc:"Masa fresca molida fina, lista para tortillas suaves hechas en casa."},
+  {id:4, disponible:true, categoria:"Tortillas y Masa", nombre:"Masa de Maíz (Quebrada)", presentacion:"Venta por kilo", precio:22, unidad:"kg", imagen:"fotos/masa quebrada.jpg", emoji:"🌽", desc:"Quebrada, ideal para gorditas, quesadillas, tamales y antojitos."},
+  {id:5, disponible:true, categoria:"Para acompañar", nombre:"Frijol Cocido", presentacion:"Bolsa de 500 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/frijol cocido.jpg", emoji:"🫘", desc:"Frijol cocido caldosito, listo para servir y acompañar tus tortillas."},
+  {id:6, disponible:true, categoria:"Para acompañar", nombre:"Nopales Cocidos", presentacion:"Bolsa de 250 g aprox.", precio:20, unidad:"bolsa", imagen:"fotos/nopales cocidos.jpg", emoji:"🌵", desc:"Nopales tiernos ya cocidos, perfectos para ensaladas o tacos."},
+  {id:7, disponible:true, categoria:"Para acompañar", nombre:"Salsa Roja de Tomate", presentacion:"Bolsa de 200 g", precio:15, unidad:"bolsa", imagen:"fotos/salsa de tomate.jpg", emoji:"🌶️", desc:"Salsa roja casera de tomate, con el picor justo para tus tacos."},
 ];
 
 const WHATSAPP_NEGOCIO = "524777308101";
 const COSTO_ENVIO = 25;
 const ENVIO_GRATIS_DESDE = 200;
+const COLONIAS_COBERTURA = [
+  "Los Olivos", "Lomas de los Olivos", "Cumbres de la Piscina", "Lomas de la Piscina",
+  "Arbide", "Cumbres de Arbide", "Loma Bonita", "Las Palmas", "La Piedrera",
+  "John F. Kennedy", "Del Cosmos (San Bernardo)", "Santa Rita de los Naranjos",
+  "Villa Residencial Arbide", "Paseos de Andalucía", "Privada Puerto de Ibiza",
+  "Fátima", "Los Limones", "Buenavista", "Ramírez García (Merced)", "El Salto"
+];
 
 /* ============ Horario de pedidos (usa la hora del teléfono del cliente) ============
    Para cambiar el horario solo ajusta estos 3 valores. */
-const HORA_APERTURA = 0;   // 8:00 AM
+const HORA_APERTURA = 8;   // 8:00 AM
 const HORA_CIERRE = 17;    // 5:00 PM
 const AVISO_MINUTOS = 30;  // avisar durante los últimos 30 min antes del cierre
 
@@ -351,6 +384,31 @@ function quitarUbicacion(){
   const msg = document.getElementById("ubiMsg");
   btn.textContent = "📍 Usar mi ubicación actual";
   msg.style.display = "none"; msg.innerHTML = "";
+}
+
+function cargarColonias(){
+  const select = document.getElementById("colonia");
+  select.innerHTML = `<option value="">Selecciona tu colonia</option>${COLONIAS_COBERTURA.map(colonia =>
+    `<option value="${colonia}">${colonia}</option>`
+  ).join("")}<option value="sin-cobertura">¿No se encuentra tu colonia?</option>`;
+}
+function cambiarColonia(){
+  const colonia = document.getElementById("colonia").value;
+  const aviso = document.getElementById("avisoCobertura");
+  const boton = document.getElementById("btnConfirmarPedido");
+  const fueraCobertura = colonia === "sin-cobertura";
+  document.getElementById("errColonia").style.display = "none";
+  boton.disabled = fueraCobertura;
+  if(fueraCobertura){
+    aviso.className = "cobertura-aviso sin-cobertura";
+    aviso.innerHTML = `Actualmente no tenemos cobertura con nuestra tarifa regular para esa zona. Podemos revisar tu entrega y el posible ajuste de envío por distancia; <a href="https://wa.me/${WHATSAPP_NEGOCIO}?text=${encodeURIComponent("Hola Tortillería PRONIXMASA, quisiera consultar si pueden entregar en mi colonia.")}" target="_blank" rel="noopener">escríbenos por WhatsApp</a>.`;
+  } else if(colonia){
+    aviso.className = "cobertura-aviso con-cobertura";
+    aviso.textContent = "✓ Esta colonia está dentro de nuestra zona de cobertura.";
+  } else {
+    aviso.className = "cobertura-aviso";
+    aviso.textContent = "";
+  }
 }
 
 function formatoMoneda(n){
@@ -510,13 +568,15 @@ function enviarPedido(){
   if(!verificarHorario()) return;
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
+  const colonia = document.getElementById("colonia").value;
   const direccion = document.getElementById("direccion").value.trim();
   const referencia = document.getElementById("referencia").value.trim();
   let valido = true;
   document.getElementById("errNombre").style.display = nombre ? "none" : "block";
   document.getElementById("errTelefono").style.display = /^\d{10}$/.test(telefono) ? "none" : "block";
+  document.getElementById("errColonia").style.display = colonia && colonia !== "sin-cobertura" ? "none" : "block";
   document.getElementById("errDireccion").style.display = direccion ? "none" : "block";
-  if(!nombre || !/^\d{10}$/.test(telefono) || !direccion) valido = false;
+  if(!nombre || !/^\d{10}$/.test(telefono) || !colonia || colonia === "sin-cobertura" || !direccion) valido = false;
   if(!valido) return;
 
   const s = subtotalCarrito();
@@ -538,12 +598,14 @@ Envío: ${e===0 ? "GRATIS" : formatoMoneda(e)}
 
 *Nombre:* ${nombre}
 *Teléfono:* ${telefono}
-*Dirección:* ${direccion}${ubicacionCliente ? "\n*Ubicación Maps:* " + ubicacionCliente.url : ""}${referencia ? "\n*Referencias:* " + referencia : ""}
+*Colonia:* ${colonia}
+*Calle y número:* ${direccion}${ubicacionCliente ? "\n*Ubicación Maps:* " + ubicacionCliente.url : ""}${referencia ? "\n*Referencias:* " + referencia : ""}
 Pago: contraentrega (efectivo)`;
 
   window.open(`https://wa.me/${WHATSAPP_NEGOCIO}?text=${encodeURIComponent(msg)}`, "_blank");
 }
 
+cargarColonias();
 pintarCatalogo();
 verificarHorario();
 setInterval(verificarHorario, 30000);
