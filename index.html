@@ -174,6 +174,9 @@
   .opciones-cambio{display:flex;flex-wrap:wrap;gap:8px;}
   .opcion-cambio{background:#fff;border:1.5px solid var(--linea);border-radius:20px;padding:8px 11px;color:var(--antracita);font:800 13px 'Nunito Sans',system-ui,sans-serif;cursor:pointer;}
   .opcion-cambio.seleccionada{background:var(--ladrillo);border-color:var(--ladrillo);color:#fff;}
+  .monto-personalizado{display:none;margin-top:10px;}
+  .monto-personalizado.visible{display:block;}
+  .monto-personalizado label{margin:0 0 6px;}
   .cambio-error{display:none;color:var(--ladrillo-osc);font-size:12px;font-weight:700;margin:8px 0 0;}
   .aviso-pago{margin-top:16px;background:var(--ladrillo-claro);border:1px solid var(--ladrillo);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--antracita);}
   .btn-ubicacion{width:100%;margin-top:10px;background:#fff;color:var(--antracita);border:1.5px dashed var(--ladrillo);padding:12px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
@@ -302,7 +305,12 @@
       <button type="button" class="opcion-cambio" data-monto="100" onclick="seleccionarPago(100)">$100</button>
       <button type="button" class="opcion-cambio" data-monto="200" onclick="seleccionarPago(200)">$200</button>
       <button type="button" class="opcion-cambio" data-monto="500" onclick="seleccionarPago(500)">$500</button>
+      <button type="button" class="opcion-cambio" data-monto="otro" onclick="seleccionarPago('otro')">Otro monto</button>
       <button type="button" class="opcion-cambio" data-monto="exacto" onclick="seleccionarPago('exacto')">Importe exacto</button>
+    </div>
+    <div class="monto-personalizado" id="montoPersonalizadoWrap">
+      <label for="montoPersonalizado">¿Con cuánto pagarás?</label>
+      <input type="tel" id="montoPersonalizado" placeholder="Ej. 180" inputmode="numeric" maxlength="5" oninput="actualizarMontoPersonalizado(this)">
     </div>
     <div class="cambio-error" id="errCambio"></div>
   </div>
@@ -337,7 +345,7 @@ const COLONIAS_COBERTURA = [
 
 /* ============ Horario de pedidos (usa la hora del teléfono del cliente) ============
    Para cambiar el horario solo ajusta estos 3 valores. */
-const HORA_APERTURA = 0;   // 8:00 AM
+const HORA_APERTURA = 8;   // 8:00 AM
 const HORA_CIERRE = 17;    // 5:00 PM
 const AVISO_MINUTOS = 30;  // avisar durante los últimos 30 min antes del cierre
 
@@ -455,18 +463,53 @@ function llevarAlCampo(campo){
 }
 function seleccionarPago(monto){
   montoPago = monto;
-  const total = totalConEnvio();
-  const error = document.getElementById("errCambio");
+  const campoPersonalizado = document.getElementById("montoPersonalizado");
+  const contPersonalizado = document.getElementById("montoPersonalizadoWrap");
   document.querySelectorAll(".opcion-cambio").forEach(btn=>{
     btn.classList.toggle("seleccionada", btn.dataset.monto === String(monto));
   });
-  if(typeof monto === "number" && monto < total){
+  contPersonalizado.classList.toggle("visible", monto === "otro");
+  if(monto === "otro"){
+    campoPersonalizado.focus();
+  } else {
+    campoPersonalizado.classList.remove("invalido");
+  }
+  validarMontoPago();
+}
+function montoSeleccionado(){
+  if(montoPago === "exacto") return totalConEnvio();
+  if(montoPago === "otro"){
+    const valor = document.getElementById("montoPersonalizado").value;
+    return valor ? Number(valor) : null;
+  }
+  return typeof montoPago === "number" ? montoPago : null;
+}
+function validarMontoPago(){
+  const total = totalConEnvio();
+  const monto = montoSeleccionado();
+  const error = document.getElementById("errCambio");
+  const campoPersonalizado = document.getElementById("montoPersonalizado");
+  campoPersonalizado.classList.remove("invalido");
+  if(montoPago === "otro" && monto === null){
+    error.textContent = "Escribe el monto con el que pagarás o elige otra opción.";
+    error.style.display = "block";
+    campoPersonalizado.classList.add("invalido");
+    return false;
+  }
+  if(monto !== null && monto < total){
     error.textContent = `El total es ${formatoMoneda(total)}. Elige un monto igual o mayor, o paga el importe exacto.`;
     error.style.display = "block";
+    if(montoPago === "otro") campoPersonalizado.classList.add("invalido");
+    return false;
   } else {
     error.textContent = "";
     error.style.display = "none";
+    return true;
   }
+}
+function actualizarMontoPersonalizado(input){
+  input.value = input.value.replace(/\D/g, "").slice(0, 5);
+  validarMontoPago();
 }
 
 function formatoMoneda(n){
@@ -486,6 +529,23 @@ function costoEnvio(){
 }
 function totalConEnvio(){ return subtotalCarrito() + costoEnvio(); }
 function cantidadTotal(){ return Object.values(carrito).reduce((a,b)=>a+b,0); }
+function formatoCantidad(p, cantidad){ return Number.isInteger(cantidad) ? cantidad : cantidad.toFixed(1); }
+function textoCantidadCarrito(p, cantidad){ return `${formatoCantidad(p, cantidad)} ${p.unidad}`; }
+function textoCantidadBarra(){
+  const cantidades = Object.entries(carrito);
+  const kilos = cantidades.reduce((total,[id,cantidad])=>{
+    const p = productos.find(producto=>producto.id==id);
+    return total + (p && p.unidad === "kg" ? cantidad : 0);
+  },0);
+  const otros = cantidades.reduce((total,[id,cantidad])=>{
+    const p = productos.find(producto=>producto.id==id);
+    return total + (p && p.unidad !== "kg" ? cantidad : 0);
+  },0);
+  const partes = [];
+  if(kilos) partes.push(`${Number.isInteger(kilos)?kilos:kilos.toFixed(1)} kg`);
+  if(otros) partes.push(otros === 1 ? "1 producto" : `${otros} productos`);
+  return partes.join(" · ");
+}
 
 function mediaProducto(p){
   if(p.video) return `<video src="${p.video}" autoplay muted loop playsinline></video>`;
@@ -515,11 +575,11 @@ function pintarCatalogo(){
         </div>`:`
         <div class="stepper">
           <div class="fila">
-            <button type="button" aria-label="Quitar" onclick="cambiarCantidad(${p.id},-1)">−</button>
-            <span class="cant" id="cant-${p.id}">${carrito[p.id]||0}</span>
-            <button type="button" aria-label="Agregar" onclick="cambiarCantidad(${p.id},1)">+</button>
+            <button type="button" aria-label="Quitar" onclick="cambiarCantidad(${p.id},-${p.id===1?0.5:1})">−</button>
+            <span class="cant" id="cant-${p.id}">${formatoCantidad(p, carrito[p.id]||0)}</span>
+            <button type="button" aria-label="Agregar" onclick="cambiarCantidad(${p.id},${p.id===1?0.5:1})">+</button>
           </div>
-          <div class="et">AGREGAR</div>
+          <div class="et">${p.id===1?'½ KG POR TOQUE':'AGREGAR'}</div>
         </div>`}
       </div>`;}).join("")}
   `).join("");
@@ -530,10 +590,11 @@ function cambiarCantidad(id,delta){
   if(p && p.disponible===false && delta>0) return;
   if(delta>0 && !estadoHorario().abierto){ verificarHorario(); return; }
   const actual = carrito[id]||0;
-  const nueva = Math.max(0,actual+delta);
+  const paso = p.id===1 ? 0.5 : 1;
+  const nueva = Math.max(0, Math.round((actual + (delta > 0 ? paso : -paso))*2)/2);
   if(nueva===0) delete carrito[id]; else carrito[id]=nueva;
   const el = document.getElementById(`cant-${id}`);
-  if(el) el.textContent = nueva;
+  if(el) el.textContent = formatoCantidad(p, nueva);
   actualizarBarra();
 }
 
@@ -551,7 +612,7 @@ function actualizarBarra(){
   const n = cantidadTotal();
   if(n>0){
     barra.classList.add("activa");
-    document.getElementById("barraCantidad").textContent = n===1 ? "1 producto" : `${n} productos`;
+    document.getElementById("barraCantidad").textContent = textoCantidadBarra();
     document.getElementById("barraTotal").textContent = formatoMoneda(subtotalCarrito());
     document.getElementById("barraEnvio").textContent = textoEnvio();
   } else barra.classList.remove("activa");
@@ -563,7 +624,7 @@ function htmlResumen(){
   const t = s+e;
   const falta = ENVIO_GRATIS_DESDE - s;
   const alerta = e===0
-    ? `<div class="alerta-envio ok">🎉 Tienes ENVÍO GRATIS por compra mayor a $200.</div>`
+    ? `<div class="alerta-envio ok">🎉 Tienes ENVÍO GRATIS desde $200 de compra.</div>`
     : `<div class="alerta-envio falta">🚚 Envío: $25. Te faltan ${formatoMoneda(falta)} para envío GRATIS (desde $200).</div>`;
   return `
     <div class="resumen">
@@ -592,7 +653,7 @@ function pintarCarrito(){
       const p = productos.find(p=>p.id==id);
       const cant = carrito[id];
       return `<div class="item-carrito">
-        <div><p class="nombre">${p.nombre}</p><p class="sub">${cant} × ${formatoMoneda(p.precio)}</p></div>
+        <div><p class="nombre">${p.nombre}</p><p class="sub">${textoCantidadCarrito(p, cant)} × ${formatoMoneda(p.precio)}</p></div>
         <div style="text-align:right"><p class="nombre">${formatoMoneda(p.precio*cant)}</p>
         <button class="quitar" onclick="quitarDelCarrito(${p.id})">Quitar</button></div>
       </div>`;
@@ -641,14 +702,14 @@ function enviarPedido(){
   const s = subtotalCarrito();
   const e = costoEnvio();
   const t = s+e;
-  if(typeof montoPago === "number" && montoPago < t){
-    seleccionarPago(montoPago);
+  if(montoPago !== null && !validarMontoPago()){
     document.getElementById("errCambio").scrollIntoView({behavior:"smooth", block:"center"});
     return;
   }
+  const efectivo = montoSeleccionado();
   const lineas = Object.entries(carrito).map(([id,cant])=>{
     const p = productos.find(p=>p.id==id);
-    return `• ${cant} x ${p.nombre} — ${formatoMoneda(p.precio*cant)}`;
+    return `• ${textoCantidadCarrito(p, cant)} de ${p.nombre} — ${formatoMoneda(p.precio*cant)}`;
   }).join("\n");
 
   const msg =
@@ -664,7 +725,7 @@ Envío: ${e===0 ? "GRATIS" : formatoMoneda(e)}
 *Teléfono:* ${telefono}
 *Colonia:* ${colonia}
 *Calle y número:* ${direccion}${ubicacionCliente ? "\n*Ubicación Maps:* " + ubicacionCliente.url : ""}${referencia ? "\n*Referencias:* " + referencia : ""}
-*Pago:* contraentrega (efectivo)${montoPago === "exacto" ? " · Importe exacto" : typeof montoPago === "number" ? " · Pagará con " + formatoMoneda(montoPago) : ""}`;
+*Pago:* contraentrega (efectivo)${montoPago === "exacto" ? " · Importe exacto" : efectivo !== null ? " · Pagará con " + formatoMoneda(efectivo) : ""}`;
 
   window.open(`https://wa.me/${WHATSAPP_NEGOCIO}?text=${encodeURIComponent(msg)}`, "_blank");
 }
