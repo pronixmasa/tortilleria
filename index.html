@@ -157,6 +157,7 @@
     padding:12px;font-size:16px;font-family:inherit;color:var(--texto);
   }
   input:focus,select:focus,textarea:focus{outline:2px solid var(--ladrillo);border-color:var(--ladrillo);}
+  input.invalido,select.invalido,textarea.invalido{border-color:var(--ladrillo-osc);background:#FFF8F6;outline:2px solid rgba(158,61,20,.2);}
   select{appearance:auto;}
   textarea{resize:vertical;min-height:64px;}
   .pasos-pedido{background:var(--tarjeta);border:1px solid var(--linea);border-radius:14px;padding:13px 14px;margin:4px 0 18px;box-shadow:0 2px 8px rgba(43,43,48,.05);}
@@ -168,6 +169,12 @@
   .cobertura-aviso.con-cobertura{display:block;background:#E8F5E9;border:1px solid #1E7A34;color:#1E7A34;}
   .cobertura-aviso a{color:inherit;font-weight:800;}
   .nota-confirmacion{margin:10px 0 0;font-size:12.5px;line-height:1.4;color:var(--muted);text-align:center;}
+  .cambio-ayuda{margin-top:16px;background:var(--fondo);border:1px solid var(--linea);border-radius:12px;padding:12px;}
+  .cambio-ayuda p{margin:0 0 10px;font-size:12.5px;color:var(--muted);line-height:1.4;}
+  .opciones-cambio{display:flex;flex-wrap:wrap;gap:8px;}
+  .opcion-cambio{background:#fff;border:1.5px solid var(--linea);border-radius:20px;padding:8px 11px;color:var(--antracita);font:800 13px 'Nunito Sans',system-ui,sans-serif;cursor:pointer;}
+  .opcion-cambio.seleccionada{background:var(--ladrillo);border-color:var(--ladrillo);color:#fff;}
+  .cambio-error{display:none;color:var(--ladrillo-osc);font-size:12px;font-weight:700;margin:8px 0 0;}
   .aviso-pago{margin-top:16px;background:var(--ladrillo-claro);border:1px solid var(--ladrillo);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--antracita);}
   .btn-ubicacion{width:100%;margin-top:10px;background:#fff;color:var(--antracita);border:1.5px dashed var(--ladrillo);padding:12px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
   .btn-ubicacion:disabled{opacity:.6;cursor:wait;}
@@ -269,10 +276,10 @@
     <p>Completa tus datos y confirma. WhatsApp está disponible únicamente para dudas o consultas.</p>
   </div>
   <label for="nombre">Nombre completo</label>
-  <input type="text" id="nombre" placeholder="¿Cómo te llamas?" autocomplete="name">
+  <input type="text" id="nombre" placeholder="¿Cómo te llamas?" autocomplete="name" oninput="limpiarError('nombre')">
   <div class="error" id="errNombre">Escribe tu nombre.</div>
   <label for="telefono">Teléfono</label>
-  <input type="tel" id="telefono" placeholder="10 dígitos" inputmode="numeric" autocomplete="tel">
+  <input type="tel" id="telefono" placeholder="10 dígitos" inputmode="numeric" autocomplete="tel" maxlength="10" oninput="normalizarTelefono(this)">
   <div class="error" id="errTelefono">Escribe un teléfono a 10 dígitos.</div>
   <label for="colonia">Colonia de entrega</label>
   <select id="colonia" onchange="cambiarColonia()" aria-describedby="avisoCobertura">
@@ -281,12 +288,24 @@
   <div class="error" id="errColonia">Selecciona una colonia para continuar.</div>
   <div class="cobertura-aviso" id="avisoCobertura" aria-live="polite"></div>
   <label for="direccion">Calle y número</label>
-  <textarea id="direccion" placeholder="Ej. Calle Reforma #123"></textarea>
+  <textarea id="direccion" placeholder="Ej. Calle Reforma #123" oninput="limpiarError('direccion')"></textarea>
   <div class="error" id="errDireccion">Escribe la calle y número para la entrega.</div>
   <button type="button" class="btn-ubicacion" id="btnUbicacion" onclick="usarUbicacion()">📍 Usar mi ubicación actual</button>
   <div class="ubi-msg" id="ubiMsg" style="display:none"></div>
   <label for="referencia">Referencias (opcional)</label>
   <textarea id="referencia" placeholder="Portón negro, entre panadería y farmacia..."></textarea>
+  <div class="cambio-ayuda">
+    <label>¿Con cuánto pagarás? <span style="font-weight:600;color:var(--muted)">(opcional)</span></label>
+    <p>Nos ayuda mucho para llevar el cambio justo.</p>
+    <div class="opciones-cambio" id="opcionesCambio">
+      <button type="button" class="opcion-cambio" data-monto="50" onclick="seleccionarPago(50)">$50</button>
+      <button type="button" class="opcion-cambio" data-monto="100" onclick="seleccionarPago(100)">$100</button>
+      <button type="button" class="opcion-cambio" data-monto="200" onclick="seleccionarPago(200)">$200</button>
+      <button type="button" class="opcion-cambio" data-monto="500" onclick="seleccionarPago(500)">$500</button>
+      <button type="button" class="opcion-cambio" data-monto="exacto" onclick="seleccionarPago('exacto')">Importe exacto</button>
+    </div>
+    <div class="cambio-error" id="errCambio"></div>
+  </div>
   <div class="aviso-pago">💵 Pagas en efectivo cuando te entreguemos tu pedido.</div>
   <button class="btn-primario" id="btnConfirmarPedido" onclick="enviarPedido()">Confirmar mi pedido</button>
   <p class="nota-confirmacion">¿Tienes una duda antes de pedir? Usa el botón de WhatsApp.</p>
@@ -318,7 +337,7 @@ const COLONIAS_COBERTURA = [
 
 /* ============ Horario de pedidos (usa la hora del teléfono del cliente) ============
    Para cambiar el horario solo ajusta estos 3 valores. */
-const HORA_APERTURA = 0;   // 8:00 AM
+const HORA_APERTURA = 8;   // 8:00 AM
 const HORA_CIERRE = 17;    // 5:00 PM
 const AVISO_MINUTOS = 30;  // avisar durante los últimos 30 min antes del cierre
 
@@ -351,6 +370,7 @@ function verificarHorario(){
 
 let carrito = {};
 let ubicacionCliente = null; // {lat, lng, url} se llena con el botón "Usar mi ubicación"
+let montoPago = null;
 
 function usarUbicacion(){
   const btn = document.getElementById("btnUbicacion");
@@ -393,11 +413,13 @@ function cargarColonias(){
   ).join("")}<option value="sin-cobertura">¿No se encuentra tu colonia?</option>`;
 }
 function cambiarColonia(){
-  const colonia = document.getElementById("colonia").value;
+  const select = document.getElementById("colonia");
+  const colonia = select.value;
   const aviso = document.getElementById("avisoCobertura");
   const boton = document.getElementById("btnConfirmarPedido");
   const fueraCobertura = colonia === "sin-cobertura";
   document.getElementById("errColonia").style.display = "none";
+  select.classList.remove("invalido");
   boton.disabled = fueraCobertura;
   if(fueraCobertura){
     aviso.className = "cobertura-aviso sin-cobertura";
@@ -408,6 +430,42 @@ function cambiarColonia(){
   } else {
     aviso.className = "cobertura-aviso";
     aviso.textContent = "";
+  }
+}
+function normalizarTelefono(input){
+  input.value = input.value.replace(/\D/g, "").slice(0, 10);
+  limpiarError("telefono");
+}
+function limpiarError(campo){
+  const input = document.getElementById(campo);
+  const error = document.getElementById(`err${campo.charAt(0).toUpperCase() + campo.slice(1)}`);
+  input.classList.remove("invalido");
+  if(error) error.style.display = "none";
+}
+function mostrarError(campo, esInvalido){
+  const input = document.getElementById(campo);
+  const error = document.getElementById(`err${campo.charAt(0).toUpperCase() + campo.slice(1)}`);
+  input.classList.toggle("invalido", esInvalido);
+  if(error) error.style.display = esInvalido ? "block" : "none";
+  return esInvalido ? input : null;
+}
+function llevarAlCampo(campo){
+  campo.scrollIntoView({behavior:"smooth", block:"center"});
+  setTimeout(()=>campo.focus({preventScroll:true}), 350);
+}
+function seleccionarPago(monto){
+  montoPago = monto;
+  const total = totalConEnvio();
+  const error = document.getElementById("errCambio");
+  document.querySelectorAll(".opcion-cambio").forEach(btn=>{
+    btn.classList.toggle("seleccionada", btn.dataset.monto === String(monto));
+  });
+  if(typeof monto === "number" && monto < total){
+    error.textContent = `El total es ${formatoMoneda(total)}. Elige un monto igual o mayor, o paga el importe exacto.`;
+    error.style.display = "block";
+  } else {
+    error.textContent = "";
+    error.style.display = "none";
   }
 }
 
@@ -551,6 +609,7 @@ function quitarDelCarrito(id){
 function irACheckout(){
   document.getElementById("panelCarrito").classList.remove("abierto");
   document.getElementById("resumenCheckout").innerHTML = htmlResumen();
+  if(montoPago !== null) seleccionarPago(montoPago);
   document.getElementById("panelCheckout").classList.add("abierto");
 }
 function volverACarrito(){
@@ -571,17 +630,22 @@ function enviarPedido(){
   const colonia = document.getElementById("colonia").value;
   const direccion = document.getElementById("direccion").value.trim();
   const referencia = document.getElementById("referencia").value.trim();
-  let valido = true;
-  document.getElementById("errNombre").style.display = nombre ? "none" : "block";
-  document.getElementById("errTelefono").style.display = /^\d{10}$/.test(telefono) ? "none" : "block";
-  document.getElementById("errColonia").style.display = colonia && colonia !== "sin-cobertura" ? "none" : "block";
-  document.getElementById("errDireccion").style.display = direccion ? "none" : "block";
-  if(!nombre || !/^\d{10}$/.test(telefono) || !colonia || colonia === "sin-cobertura" || !direccion) valido = false;
-  if(!valido) return;
+  const primerError = [
+    mostrarError("nombre", !nombre),
+    mostrarError("telefono", !/^\d{10}$/.test(telefono)),
+    mostrarError("colonia", !colonia || colonia === "sin-cobertura"),
+    mostrarError("direccion", !direccion)
+  ].find(Boolean);
+  if(primerError){ llevarAlCampo(primerError); return; }
 
   const s = subtotalCarrito();
   const e = costoEnvio();
   const t = s+e;
+  if(typeof montoPago === "number" && montoPago < t){
+    seleccionarPago(montoPago);
+    document.getElementById("errCambio").scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
   const lineas = Object.entries(carrito).map(([id,cant])=>{
     const p = productos.find(p=>p.id==id);
     return `• ${cant} x ${p.nombre} — ${formatoMoneda(p.precio*cant)}`;
@@ -600,7 +664,7 @@ Envío: ${e===0 ? "GRATIS" : formatoMoneda(e)}
 *Teléfono:* ${telefono}
 *Colonia:* ${colonia}
 *Calle y número:* ${direccion}${ubicacionCliente ? "\n*Ubicación Maps:* " + ubicacionCliente.url : ""}${referencia ? "\n*Referencias:* " + referencia : ""}
-Pago: contraentrega (efectivo)`;
+*Pago:* contraentrega (efectivo)${montoPago === "exacto" ? " · Importe exacto" : typeof montoPago === "number" ? " · Pagará con " + formatoMoneda(montoPago) : ""}`;
 
   window.open(`https://wa.me/${WHATSAPP_NEGOCIO}?text=${encodeURIComponent(msg)}`, "_blank");
 }
